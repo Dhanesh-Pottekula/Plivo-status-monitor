@@ -15,16 +15,14 @@ class Organization(models.Model):
 
 
 class User(AbstractUser):
-    username = None
     USER_ROLES = [
         ('admin', 'Admin'),
         ('team', 'Team Member'),
         ('user', 'User'),
     ]
     
-    # Remove username field and use email as primary identifier
+    username = models.EmailField(unique=True,null=False,blank=False)
     full_name = models.CharField(max_length=200, blank=True, null=True)
-    email = models.EmailField(unique=True)
     
     # Multi-tenant fields
     organization = models.ForeignKey(
@@ -41,11 +39,11 @@ class User(AbstractUser):
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
 
-    USERNAME_FIELD = 'email'
-    REQUIRED_FIELDS = ['full_name']
+    USERNAME_FIELD = 'username'
+    REQUIRED_FIELDS = ['email', 'full_name']
 
     def __str__(self):
-        return f"{self.get_full_name()} ({self.email})"
+        return f"{self.get_full_name()} ({self.username})"
 
     def get_full_name(self):
         return self.full_name

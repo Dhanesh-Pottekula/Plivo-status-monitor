@@ -16,7 +16,7 @@ import json
 import re
 from .models import User, Organization
 from .validators import (
-    validate_email, validate_phone, validate_signup_data, 
+    validate_email, validate_signup_data, 
     validate_login_data, validate_organization_data, validate_profile_fields
 )
 
@@ -34,14 +34,9 @@ def get_user_data(user):
     """Convert user object to dictionary"""
     return {
         'id': str(user.id),
-        'email': user.email,
+        'email': user.username,
         'first_name': user.first_name,
         'last_name': user.last_name,
-        'phone': user.phone,
-        'address': user.address,
-        'city': user.city,
-        'state': user.state,
-        'zip_code': user.zip_code,
         'organization': {
             'id': str(user.organization.id),
             'name': user.organization.name,
@@ -92,7 +87,7 @@ def signup_view(request):
         
         # Create user
         user = User.objects.create_user(
-            email=data['email'],
+            username=data['email'],
             password=data['password'],
             full_name=data['full_name'],
             role=data.get('role', 'user'),
@@ -152,9 +147,9 @@ def login_view(request):
         validation_errors = validate_login_data(data)
         if validation_errors:
             return Response({'error': validation_errors}, status=status.HTTP_400_BAD_REQUEST)
-        
         # Authenticate user
-        user = authenticate(request, email=data['email'], password=data['password'])
+        user = authenticate(request, username=data['username'], password=data['password'])
+        print(user)
         
         if user is not None:
             if not user.is_active:
@@ -342,21 +337,6 @@ def update_profile_view(request):
         
         if 'last_name' in data:
             user.last_name = data['last_name']
-        
-        if 'phone' in data:
-            user.phone = data['phone']
-        
-        if 'address' in data:
-            user.address = data['address']
-        
-        if 'city' in data:
-            user.city = data['city']
-        
-        if 'state' in data:
-            user.state = data['state']
-        
-        if 'zip_code' in data:
-            user.zip_code = data['zip_code']
         
         user.save()
         

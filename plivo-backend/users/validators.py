@@ -11,14 +11,6 @@ def validate_email(email):
     return re.match(pattern, email) is not None
 
 
-def validate_phone(phone):
-    """Validate phone number format"""
-    if not phone:
-        return True
-    pattern = r'^\+?1?\d{9,15}$'
-    return re.match(pattern, phone) is not None
-
-
 def validate_password(password):
     """Validate password requirements"""
     if not password:
@@ -77,7 +69,7 @@ def validate_user_role(role):
 
 def validate_user_exists(email):
     """Check if user with given email already exists"""
-    if User.objects.filter(email=email).exists():
+    if User.objects.filter(username=email).exists():
         return False, "A user with this email already exists"
     
     return True, None
@@ -102,24 +94,6 @@ def validate_profile_fields(data):
     
     if 'last_name' in data and len(data['last_name']) > 30:
         errors['last_name'] = 'Last name cannot exceed 30 characters'
-    
-    if 'phone' in data:
-        if data['phone'] and not validate_phone(data['phone']):
-            errors['phone'] = "Phone number must be entered in the format: '+999999999'. Up to 15 digits allowed."
-        if data['phone'] and len(data['phone']) > 15:
-            errors['phone'] = 'Phone number cannot exceed 15 characters'
-    
-    if 'address' in data and data['address'] and len(data['address']) > 500:
-        errors['address'] = 'Address cannot exceed 500 characters'
-    
-    if 'city' in data and data['city'] and len(data['city']) > 100:
-        errors['city'] = 'City cannot exceed 100 characters'
-    
-    if 'state' in data and data['state'] and len(data['state']) > 100:
-        errors['state'] = 'State cannot exceed 100 characters'
-    
-    if 'zip_code' in data and data['zip_code'] and len(data['zip_code']) > 10:
-        errors['zip_code'] = 'Zip code cannot exceed 10 characters'
     
     return errors
 
@@ -173,10 +147,10 @@ def validate_login_data(data):
     """Validate login data fields"""
     errors = {}
     
-    if not data.get('email'):
-        errors['email'] = 'Email is required'
-    elif not validate_email(data['email']):
-        errors['email'] = 'Invalid email format'
+    if not data.get('username'):
+        errors['username'] = 'Email is required'
+    elif not validate_email(data['username']):
+        errors['username'] = 'Invalid email format'
     
     if not data.get('password'):
         errors['password'] = 'Password is required'

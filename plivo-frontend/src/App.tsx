@@ -5,8 +5,8 @@ import PublicRoute from "./_helpers/PublicRoute";
 import PrivateRoute from "./_helpers/PrivateRoute";
 import BaseUrlComponent from "./_helpers/BaseRoute";
 import AdminRoute from "./_helpers/AdminRoute";
-import { LogIn } from "lucide-react";
 import SignUp from "./pages/SignUp";
+import LoginPage from "./pages/LoginPage";
 import "./App.css";
 import { Provider } from "react-redux";
 import { store } from "./store";
@@ -16,24 +16,17 @@ const AppRoutes: React.FC = () => {
     <Routes>
       {/* Public routes */}
       <Route element={<PublicRoute />}>
-        <Route path="/login" element={<LogIn />} />
+        <Route path="/login" element={<LoginPage />} />
         <Route path="/signup" element={<SignUp />} />
       </Route>
       <Route path="/dashboard" element={<BaseUrlComponent />} />
 
       {/* Private routes */}
       <Route path="/" element={<PrivateRoute />}>
-
-
         {/* Admin routes */}
-        <Route path="/" element={<AdminRoute />}>
-      
-        </Route>
-
-
+        <Route path="/" element={<AdminRoute />}></Route>
 
         {/* Common routes */}
-       
       </Route>
 
       {/* Catch all route */}
@@ -45,12 +38,11 @@ const AppRoutes: React.FC = () => {
 function App() {
   return (
     <BrowserRouter>
-     <Provider store={store}>
-
-      <AuthProvider>
-        <AppRoutes />
-      </AuthProvider>
-     </Provider>
+      <Provider store={store}>
+        <AuthProvider>
+          <AppRoutes />
+        </AuthProvider>
+      </Provider>
     </BrowserRouter>
   );
 }

@@ -4,7 +4,8 @@ const baseURL = envDefaults.nodeApiUrl;
 // axios.defaults.xsrfHeaderName = "X-CSRFTOKEN";
 // axios.defaults.xsrfCookieName = "csrftoken";
 const axiosNodeInstance = axios.create({
-    baseURL: baseURL
+    baseURL: baseURL,
+    withCredentials: true
 });
 
 axiosNodeInstance.interceptors.request.use(

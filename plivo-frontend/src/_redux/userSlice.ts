@@ -12,7 +12,10 @@ interface InitialState {
   user: UserInterface | null;
   error: string | null;
 }
-
+export interface LoginFormData {
+  username: string;
+  password: string;
+}
 const initialState: InitialState = {
   isLoading: false,
   user: null,
@@ -23,10 +26,10 @@ const initialState: InitialState = {
 // Async Thunks
 export const getUser = createAsyncThunk<UserInterface>(
   "auth/getUser",
-  async (data, { rejectWithValue }) => {
+  async (_, { rejectWithValue }) => {
     try {
-      const res = await axiosNodeInstance.post(apiUrls.auth.getUser, data);
-      return res.data;
+      const res = await axiosNodeInstance.get(apiUrls.auth.getUser);
+      return res.data.user;
     } catch (error: unknown) {
       return rejectWithValue(error);
     }
@@ -41,6 +44,18 @@ export const signUp = createAsyncThunk<UserInterface, SignUpFormData>(
       return res.data;
     } catch (error: unknown) {
       return rejectWithValue(error);  
+    }
+  }
+);
+
+export const login = createAsyncThunk<UserInterface, LoginFormData>(
+  "auth/login",
+  async (data, { rejectWithValue }) => {
+    try {
+      const res = await axiosNodeInstance.post(apiUrls.auth.login, data);
+      return res.data;
+    } catch (error: unknown) {
+      return rejectWithValue(error);
     }
   }
 );

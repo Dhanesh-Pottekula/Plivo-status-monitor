@@ -54,16 +54,16 @@ const SignUp: React.FC = () => {
                       Email Address *
                     </Label>
                     <Input
-                      id="email"
+                      id="username"
                       type="email"
-                      name="email"
-                      value={formData.email}
+                      name="username"
+                      value={formData.username}
                       onChange={handleInputChange}
                       placeholder="john@example.com"
-                      className={errors.email ? 'border-red-500 focus-visible:ring-red-500' : ''}
+                      className={errors.username ? 'border-red-500 focus-visible:ring-red-500' : ''}
                     />
-                    {errors.email && (
-                      <p className="text-red-500 text-sm">{errors.email}</p>
+                    {errors.username && (
+                      <p className="text-red-500 text-sm">{errors.username}</p>
                     )}
                   </div>
                 </div>

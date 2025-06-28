@@ -29,11 +29,12 @@ export interface UserInterface {
   is_active: boolean;
   created_at: string;
   updated_at: string;
+  username: string;
 }
 
 export interface SignUpFormData {
   full_name: string;
-  email: string;
+  username: string;
   password: string;
   confirm_password: string;
   role: UserRole;
@@ -47,3 +48,4 @@ export interface SignUpResponse {
   message: string;
   success: boolean;
 }
+

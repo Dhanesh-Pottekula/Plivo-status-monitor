@@ -6,6 +6,7 @@ from django.conf import settings
 from django.http import JsonResponse
 from . import urls
 import logging
+import re
 
 logger = logging.getLogger(__name__)
 User = get_user_model()
@@ -36,7 +37,6 @@ class JWTAuthenticationMiddleware(MiddlewareMixin):
             # Decode and validate the token
             access_token = AccessToken(token)
             user_id = access_token['user_id']
-            
             # Get user from database
             user = User.objects.get(id=user_id)
             
@@ -87,3 +87,9 @@ class JWTAuthenticationMiddleware(MiddlewareMixin):
         skip_paths = ['/admin', '/api/auth/signup', '/api/auth/login', '/api/health']
         
         return any(path.startswith(skip_path) for skip_path in skip_paths) 
+
+class CSRFExemptionMiddleware(MiddlewareMixin):
+    def process_request(self, request):
+        for pattern in settings.CSRF_EXEMPT_URLS:
+            if re.match(pattern, request.path):
+                setattr(request, '_dont_enforce_csrf_checks', True)

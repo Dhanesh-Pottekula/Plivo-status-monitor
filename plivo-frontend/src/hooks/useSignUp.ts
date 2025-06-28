@@ -18,7 +18,7 @@ function useSignUp() {
   const [isLoading, setIsLoading] = useState(false);
   const [formData, setFormData] = useState<SignUpFormData>({
     full_name: '',
-    email: '',
+    username: '',
     password: '',
     confirm_password: '',
     role: UserRole.USER,
@@ -49,8 +49,8 @@ const dispatch = useAppDispatch()
     const fullNameError = validateFullName(formData.full_name);
     if (fullNameError) newErrors.full_name = fullNameError;
 
-    const emailError = validateEmail(formData.email);
-    if (emailError) newErrors.email = emailError;
+    const emailError = validateEmail(formData.username);
+    if (emailError) newErrors.username = emailError;
 
     const passwordError = validatePassword(formData.password);
     if (passwordError) newErrors.password = passwordError;
@@ -78,7 +78,7 @@ const dispatch = useAppDispatch()
       await dispatch(signUp(formData))
       await dispatch(getUser())
     } catch {
-      setErrors({ email: 'Network error. Please try again.' });
+      setErrors({ username: 'Network error. Please try again.' });
     } finally {
       setIsLoading(false);
     }
