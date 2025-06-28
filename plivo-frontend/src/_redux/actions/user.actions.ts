@@ -182,3 +182,27 @@ export const verifyInviteTokenAction = (token: string) => async (dispatch: Dispa
     return errorMessage;
   }
 };
+
+// Grant Access Action
+export const updateUserAccessAction = (data: { user_id: string, has_access: boolean }) => async (dispatch: Dispatch<UserActionTypes>) => {
+  dispatch({
+    type: userConstants.GRANT_ACCESS.REQUEST,
+    payload: null,
+  });
+  
+  try {
+    const response = await axiosNodeInstance.post(apiUrls.auth.grantAccess, data);
+    dispatch({
+      type: userConstants.GRANT_ACCESS.SUCCESS,
+      payload: response.data,
+    });
+    return response.data;
+  } catch (error) {
+    const errorMessage = handleError(error);
+    dispatch({
+      type: userConstants.GRANT_ACCESS.FAILURE,
+      payload: errorMessage,
+    });
+    throw error;
+  }
+};

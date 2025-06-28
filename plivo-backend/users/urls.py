@@ -20,5 +20,8 @@ urlpatterns = [
     path('invite/verify/<str:token>/', views.verify_invite_token_view, name='verify_invite'),
     path('invite/list/', views.get_team_members_view, name='get_team_members'),
     
+    # Access management endpoints
+    path('invite/update-access/', views.update_user_access_view, name='update_user_access'),
+    
 
 ]

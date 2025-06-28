@@ -21,6 +21,8 @@ export const userConstants = {
   CLEAR_ERROR: 'CLEAR_ERROR',
   LOGOUT: createAsyncActionTypes("LOGOUT"),
   VERIFY_INVITE_TOKEN: createAsyncActionTypes("VERIFY_INVITE_TOKEN"),
+  GRANT_ACCESS: createAsyncActionTypes("GRANT_ACCESS"),
+  REVOKE_ACCESS: createAsyncActionTypes("REVOKE_ACCESS"),
 };
 
 export type UserActionTypes =
@@ -42,3 +44,6 @@ export type UserActionTypes =
   | { type: typeof userConstants.GET_TEAM_MEMBERS.REQUEST; payload: null }
   | { type: typeof userConstants.GET_TEAM_MEMBERS.SUCCESS; payload: TeamMemberResponse }
   | { type: typeof userConstants.GET_TEAM_MEMBERS.FAILURE; payload: Error_response_on_api_failure | null }
+  | { type: typeof userConstants.GRANT_ACCESS.REQUEST; payload: null }
+  | { type: typeof userConstants.GRANT_ACCESS.SUCCESS; payload: null }
+  | { type: typeof userConstants.GRANT_ACCESS.FAILURE; payload: Error_response_on_api_failure | null }

@@ -443,3 +443,46 @@ def get_team_members_view(request):
             {'error': f'Failed to fetch invite links: {str(e)}'}, 
             status=status.HTTP_400_BAD_REQUEST
         )
+
+
+@api_view(['POST'])
+@permission_classes([IsAuthenticated])
+def update_user_access_view(request):
+    """Grant access to a team member"""
+    try:
+        # Only organization admins can grant access
+        if not request.user.is_organization_admin and request.user.role != 'admin':
+            return Response(
+                {'error': 'You do not have permission to grant access'}, 
+                status=status.HTTP_403_FORBIDDEN
+            )
+        
+        data = request.data
+        user_id = data.get('user_id')
+        has_access = data.get('has_access')
+        
+        if not user_id:
+            return Response({'error': 'Invite token is required'}, status=status.HTTP_400_BAD_REQUEST)
+        
+        try:
+            user = User.objects.get(
+                id=user_id,
+                organization=request.user.organization,
+            )
+        except User.DoesNotExist:
+            return Response({'error': 'Invalid user id'}, status=status.HTTP_404_NOT_FOUND)
+        
+        # Grant access to the user
+        user.has_access = has_access
+        user.save()
+        
+        return Response({
+            'message': 'Access granted successfully',
+            'success': True
+        }, status=status.HTTP_200_OK)
+        
+    except Exception as e:
+        return Response(
+            {'error': f'Failed to grant access: {str(e)}'}, 
+            status=status.HTTP_400_BAD_REQUEST
+        )

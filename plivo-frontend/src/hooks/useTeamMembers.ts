@@ -1,4 +1,4 @@
-import { generateInviteLinkAction, getTeamMembersAction } from '@/_redux/actions/user.actions';
+import { generateInviteLinkAction, getTeamMembersAction, updateUserAccessAction } from '@/_redux/actions/user.actions';
 import type { AppDispatch, RootState } from '@/_redux/store';
     import React, { useEffect, useState } from 'react'
 import { useDispatch, useSelector } from 'react-redux';
@@ -14,6 +14,7 @@ function useTeamMembers() {
    const [isLoading, setIsLoading] = useState(false);
    const [inviteLink, setInviteLink] = useState('');
    const [error, setError] = useState('');
+   const [isAccessLoading, setIsAccessLoading] = useState(false);
    
    useEffect(() => {
     const timeout = setTimeout(() => {
@@ -73,6 +74,19 @@ console.log("getTeamMembersList")
      setOpenInviteLinkModal(true);
    };
 
+   const grantAndRevokeAccess = async (userId: string,has_access: boolean) => {
+     setIsAccessLoading(true);
+     try {
+       await dispatch(updateUserAccessAction({ user_id: userId, has_access: has_access }));
+       // Refresh team members list after granting access
+       await getTeamMembersList();
+     } catch (error) {
+       console.error('Failed to grant access:', error);
+     } finally {
+       setIsAccessLoading(false);
+     }
+   };
+
   return {
    username,
    setUsername,
@@ -83,10 +97,12 @@ console.log("getTeamMembersList")
    isLoading,
    inviteLink,
    error,
+   isAccessLoading,
    handleSubmit,
    handleCopyLink,
    handleCloseModal,
    openModal,
+   grantAndRevokeAccess,
    teamMembers
   }
 }
