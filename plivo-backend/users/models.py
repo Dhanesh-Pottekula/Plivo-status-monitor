@@ -1,6 +1,9 @@
 from django.db import models
 from django.contrib.auth.models import AbstractUser
 from django.core.validators import RegexValidator
+import uuid
+from datetime import timedelta
+from django.utils import timezone
 
 
 class Organization(models.Model):
@@ -55,3 +58,41 @@ class User(AbstractUser):
     @property
     def is_team_member(self):
         return self.role == 'team'
+
+
+class InviteLink(models.Model):
+    """Model for team member invitation links"""
+    token = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
+    username = models.EmailField(blank=True, null=True)
+    role = models.CharField(max_length=10, choices=User.USER_ROLES, default='team')
+    organization = models.ForeignKey(Organization, on_delete=models.CASCADE, related_name='invite_links')
+    created_by = models.ForeignKey(User, on_delete=models.CASCADE, related_name='created_invites')
+    used_by = models.ForeignKey(User, on_delete=models.SET_NULL, null=True, blank=True, related_name='used_invites')
+    expires_at = models.DateTimeField()
+    created_at = models.DateTimeField(auto_now_add=True)
+    updated_at = models.DateTimeField(auto_now=True)
+
+    class Meta:
+        db_table = 'invite_links'
+        indexes = [
+            models.Index(fields=['token']),
+            models.Index(fields=['created_by']),
+            models.Index(fields=['used_by']),
+            models.Index(fields=['expires_at']),
+        ]
+
+    def __str__(self):
+        return f"Invite for {self.username or 'anyone'} to {self.organization.name}"
+
+    @property
+    def is_expired(self):
+        return timezone.now() > self.expires_at
+
+    @property
+    def is_valid(self):
+        return not self.used_by and not self.is_expired
+
+    def mark_as_used(self, user):
+        """Mark the invite as used by a specific user"""
+        self.used_by = user
+        self.save()

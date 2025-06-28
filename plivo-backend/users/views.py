@@ -12,19 +12,28 @@ from rest_framework.response import Response
 from rest_framework_simplejwt.tokens import AccessToken
 from rest_framework_simplejwt.views import TokenObtainPairView, TokenRefreshView
 from django.conf import settings
+from django.utils import timezone
+from datetime import timedelta
 import json
 import re
-from .models import User, Organization
+from .models import User, Organization, InviteLink
 from .validators import (
-    validate_email, validate_signup_data, 
-    validate_login_data, validate_organization_data, validate_profile_fields
+     validate_signup_data, 
+    validate_login_data, validate_profile_fields,
 )
+
+
+def public_endpoint(view_func):
+    """Decorator to mark views as public endpoints that don't require authentication"""
+    view_func.is_public = True
+    return view_func
+
 
 def get_user_data(user):
     """Convert user object to dictionary"""
     return {
         'id': str(user.id),
-        'email': user.username,
+        'username': user.username,
         'full_name': user.full_name,
         'organization': {
             'id': str(user.organization.id),
@@ -57,26 +66,38 @@ def signup_view(request):
         if validation_errors:
             return Response({'error': validation_errors}, status=status.HTTP_400_BAD_REQUEST)
         
+        invite_link = None
+        # Only validate invite code for team members
+        if data.get('role') == 'team':
+            if not data.get('invite_code'):
+                return Response({'error': 'invite code is required'}, status=status.HTTP_400_BAD_REQUEST)
+            
+            try:
+                invite_link = InviteLink.objects.get(token=data.get('invite_code'))
+                if invite_link.username != data.get('username'):
+                    return Response({'error': "invite code is not valid"}, status=status.HTTP_400_BAD_REQUEST)
+                
+                # Check if invite is still valid and not used
+                if not invite_link.is_valid or invite_link.used_by:
+                    return Response({'error': "invite code has expired or already used"}, status=status.HTTP_400_BAD_REQUEST)
+                    
+            except InviteLink.DoesNotExist:
+                return Response({'error': "invalid invite code"}, status=status.HTTP_400_BAD_REQUEST)
+
         # Create or get organization
         organization = None
-        if data.get('organization_name'):
+        if data.get('organization_name') and data.get('role') == 'admin':
             # Check if organization with this name already exists
             organization, created = Organization.objects.get_or_create(
-                name=data['organization_name'],
-                defaults={
-                    'domain': data.get('organization_link', ''),
-                    'is_active': True
-                }
+                name=data['organization_name']
             )
-            
-            # If organization already exists, update domain if provided
-            if not created and data.get('organization_link'):
-                organization.domain = data['organization_link']
-                organization.save()
+        elif data.get('role') == 'team' and invite_link:
+            # For team members, use the organization from the invite link
+            organization = invite_link.organization
         
         # Create user
         user = User.objects.create_user(
-            username=data['email'],
+            username=data['username'],
             password=data['password'],
             full_name=data['full_name'],
             role=data.get('role', 'user'),
@@ -84,22 +105,18 @@ def signup_view(request):
             is_organization_admin=True if data.get('role') == 'admin' else False
         )
         
+        # Mark invite link as used for team members
+        if data.get('role') == 'team' and invite_link:
+            invite_link.used_by = user
+            invite_link.save()
+
         # Generate JWT token
         access_token = AccessToken.for_user(user)
         
         # Create response
         response_data = {
             'message': 'User registered successfully',
-            'success': True,
-            'user': get_user_data(user),
-            'organization': {
-                'id': str(organization.id),
-                'name': organization.name,
-                'domain': organization.domain,
-                'created_at': organization.created_at.isoformat(),
-                'updated_at': organization.updated_at.isoformat(),
-                'is_active': organization.is_active
-            } if organization else None
+            'success': True
         }
         response = Response(response_data, status=status.HTTP_201_CREATED)
         
@@ -147,13 +164,10 @@ def login_view(request):
             # Generate JWT token
             access_token = AccessToken.for_user(user)
             
-            # Create response
-            response_data = {
+            response = Response({
                 'message': 'Login successful',
-                'success': True,
-                'user': get_user_data(user)
-            }
-            response = Response(response_data, status=status.HTTP_200_OK)
+                'success': True
+            }, status=status.HTTP_200_OK)
             
             # Set cookie
             response.set_cookie(
@@ -290,6 +304,140 @@ def update_profile_view(request):
 @api_view(['POST'])
 @permission_classes([IsAuthenticated])
 def invite_url_team_member_view(request):
-    """create the unique url for team member to join the organization valid for 1 day"""
-    data = request.data
-    username = data.get('username')
+    """Create a unique URL for team member to join the organization valid for 1 day"""
+    try:
+        data = request.data
+        if(not data.get('username')):
+            return Response({'error': 'Username is required'}, status=status.HTTP_400_BAD_REQUEST)
+
+        user_exists = User.objects.filter(username=data.get('username')).exists()
+        if(user_exists):
+            return Response({'error': 'User already exists'}, status=status.HTTP_400_BAD_REQUEST)
+        # Create invite link
+        invite_link = InviteLink.objects.create(
+            username=data.get('username'),  # Optional
+            role=data.get('role', 'team'),
+            organization=request.user.organization,
+            created_by=request.user,
+            expires_at=timezone.now() + timedelta(days=1)  # Valid for 1 day
+        )
+        
+        # Generate the invite URL
+        base_url = settings.FRONTEND_URL if hasattr(settings, 'FRONTEND_URL') else 'http://localhost:3000'
+        invite_url = f"{base_url}/signup?token={invite_link.token}"
+        
+        return Response({
+            'message': 'Invite link created successfully',
+            'success': True,
+            'invite_url': invite_url,
+            'expires_at': invite_link.expires_at.isoformat(),
+            'invite_data': {
+                'id': str(invite_link.token),
+                'username': invite_link.username,
+                'role': invite_link.role,
+                'created_at': invite_link.created_at.isoformat(),
+                'expires_at': invite_link.expires_at.isoformat()
+            }
+        }, status=status.HTTP_201_CREATED)
+        
+    except Exception as e:
+        return Response(
+            {'error': f'Failed to create invite link: {str(e)}'}, 
+            status=status.HTTP_400_BAD_REQUEST
+        )
+
+
+@api_view(['GET'])
+@permission_classes([AllowAny])
+@public_endpoint
+def verify_invite_token_view(request):
+    """Verify if an invite token is valid and return invite details"""
+    try:
+        token = request.data.get('token')
+        
+        if not token:
+            return Response(
+                {'error': 'Token is required'}, 
+                status=status.HTTP_400_BAD_REQUEST
+            )
+        
+        # Get invite link
+        try:
+            invite_link = InviteLink.objects.get(token=token)
+        except InviteLink.DoesNotExist:
+            return Response(
+                {'error': 'Invalid invite token'}, 
+                status=status.HTTP_404_NOT_FOUND
+            )
+        
+        # Check if invite is valid
+        if not invite_link.is_valid or  invite_link.used_by:
+            return Response(
+                {'error': 'Invalid invite token'}, 
+                status=status.HTTP_404_NOT_FOUND
+            )
+        
+        return Response({
+            'success': True,
+            'invite_data': {
+                'username': invite_link.username,
+                'role': invite_link.role,
+                'organization': {
+                    'id': str(invite_link.organization.id),
+                    'name': invite_link.organization.name,
+                    'domain': invite_link.organization.domain
+                },
+                'expires_at': invite_link.expires_at.isoformat()
+            }
+        }, status=status.HTTP_200_OK)
+        
+    except Exception as e:
+        return Response(
+            {'error': f'Failed to verify invite token: {str(e)}'}, 
+            status=status.HTTP_400_BAD_REQUEST
+        )
+
+
+
+@api_view(['GET'])
+@permission_classes([IsAuthenticated])
+def get_invite_links_view(request):
+    """Get all invite links created by the current user"""
+    try:
+        # Only organization admins can view invite links
+        if not request.user.is_organization_admin and request.user.role != 'admin':
+            return Response(
+                {'error': 'You do not have permission to view invite links'}, 
+                status=status.HTTP_403_FORBIDDEN
+            )
+        
+        invite_links = InviteLink.objects.filter(
+            created_by=request.user,
+            organization=request.user.organization
+        ).order_by('-created_at')
+        
+        invite_links_data = [{
+            'id': str(invite.token),
+            'username': invite.username,
+            'role': invite.role,
+            'is_expired': invite.is_expired,
+            'is_valid': invite.is_valid,
+            'used_by': {
+                'id': str(invite.used_by.id),
+                'username': invite.used_by.username,
+                'full_name': invite.used_by.full_name
+            } if invite.used_by else None,
+            'created_at': invite.created_at.isoformat(),
+            'expires_at': invite.expires_at.isoformat()
+        } for invite in invite_links]
+        
+        return Response({
+            'invite_links': invite_links_data,
+            'success': True
+        }, status=status.HTTP_200_OK)
+        
+    except Exception as e:
+        return Response(
+            {'error': f'Failed to fetch invite links: {str(e)}'}, 
+            status=status.HTTP_400_BAD_REQUEST
+        )

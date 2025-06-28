@@ -15,6 +15,10 @@ urlpatterns = [
     # Organization endpoints
     path('organizations/', views.get_organizations_view, name='get_organizations'),
     
-    # Health check
-    path('health/', views.health_check_view, name='health_check'),
+    # Invite link endpoints
+    path('invite/create/', views.invite_url_team_member_view, name='create_invite'),
+    path('invite/verify/', views.verify_invite_token_view, name='verify_invite'),
+    path('invite/list/', views.get_invite_links_view, name='get_invite_links'),
+    
+
 ]

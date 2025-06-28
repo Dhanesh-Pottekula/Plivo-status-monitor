@@ -5,10 +5,10 @@ from rest_framework.response import Response
 from .models import User
 
 
-def validate_email(email):
+def validate_username(username):
     """Validate email format"""
     pattern = r'^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$'
-    return re.match(pattern, email) is not None
+    return re.match(pattern, username) is not None
 
 
 def validate_password(password):
@@ -67,10 +67,10 @@ def validate_user_role(role):
     return True, None
 
 
-def validate_user_exists(email):
+def validate_user_exists(username):
     """Check if user with given email already exists"""
-    if User.objects.filter(username=email).exists():
-        return False, "A user with this email already exists"
+    if User.objects.filter(username=username).exists():
+        return False, "A user with this username already exists"
     
     return True, None
 
@@ -103,10 +103,10 @@ def validate_signup_data(data):
     errors = {}
     
     # Required fields validation
-    if not data.get('email'):
-        errors['email'] = 'Email is required'
-    elif not validate_email(data['email']):
-        errors['email'] = 'Invalid email format'
+    if not data.get('username'):
+        errors['username'] = 'Username is required'
+    elif not validate_username(data['username']):
+        errors['username'] = 'Invalid username format'
     
     # Password validation
     password_valid, password_error = validate_password(data.get('password'))
@@ -134,12 +134,6 @@ def validate_signup_data(data):
     if not role_valid:
         errors['role'] = role_error
     
-    # User existence validation (only if email is valid)
-    if not errors.get('email') and data.get('email'):
-        user_exists_valid, user_exists_error = validate_user_exists(data['email'])
-        if not user_exists_valid:
-            errors['email'] = user_exists_error
-    
     return errors
 
 
@@ -149,8 +143,8 @@ def validate_login_data(data):
     
     if not data.get('username'):
         errors['username'] = 'Email is required'
-    elif not validate_email(data['username']):
-        errors['username'] = 'Invalid email format'
+    elif not validate_username(data['username']):
+        errors['username'] = 'Invalid username format'
     
     if not data.get('password'):
         errors['password'] = 'Password is required'
