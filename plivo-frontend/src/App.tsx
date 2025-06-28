@@ -7,7 +7,7 @@ import BaseUrlComponent from "./_helpers/BaseRoute";
 import AdminRoute from "./_helpers/AdminRoute";
 import { LogIn } from "lucide-react";
 import SignUp from "./pages/SignUp";
-
+import "./App.css";
 // App Routes component
 const AppRoutes: React.FC = () => {
   return (

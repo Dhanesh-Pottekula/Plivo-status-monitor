@@ -2,6 +2,9 @@ import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { UserRole } from '../_constants/Interfaces/UserInterfaces';
 import { Button } from '../components/ui/button';
+import { Input } from '../components/ui/input';
+import { Label } from '../components/ui/label';
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '../components/ui/card';
 import { Loader } from 'lucide-react';
 
 interface SignUpFormData {
@@ -10,6 +13,8 @@ interface SignUpFormData {
   password: string;
   confirm_password: string;
   role: UserRole;
+  organization_name: string;
+  organization_link: string;
 }
 
 const SignUp: React.FC = () => {
@@ -21,6 +26,8 @@ const SignUp: React.FC = () => {
     password: '',
     confirm_password: '',
     role: UserRole.USER,
+    organization_name: '',
+    organization_link: '',
   });
   const [errors, setErrors] = useState<Partial<SignUpFormData>>({});
 
@@ -60,6 +67,14 @@ const SignUp: React.FC = () => {
       newErrors.confirm_password = 'Passwords do not match';
     }
 
+    if (!formData.organization_name.trim()) {
+      newErrors.organization_name = 'Organization name is required';
+    }
+
+    if (formData.organization_link.trim() && !/^https?:\/\/.+/.test(formData.organization_link)) {
+      newErrors.organization_link = 'Please enter a valid URL (starting with http:// or https://)';
+    }
+
     setErrors(newErrors);
     return Object.keys(newErrors).length === 0;
   };
@@ -97,133 +112,185 @@ const SignUp: React.FC = () => {
   };
 
   return (
-    <div className="min-h-screen bg-gray-50 flex items-center justify-center py-12 px-4 sm:px-6 lg:px-8">
-      <div className="max-w-md w-full space-y-8">
-        <div className="text-center">
-          <h1 className="text-3xl font-bold text-gray-900 mb-2">Create Account</h1>
-          <p className="text-gray-600">Sign up to get started</p>
-        </div>
-        
-        <form onSubmit={handleSubmit} className="space-y-4">
-          <div>
-            <label className="block text-sm font-medium text-gray-700 mb-1">
-              Full Name *
-            </label>
-            <input
-              type="text"
-              name="full_name"
-              value={formData.full_name}
-              onChange={handleInputChange}
-              className={`w-full px-3 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 ${
-                errors.full_name ? 'border-red-500' : 'border-gray-300'
-              }`}
-              placeholder="John Doe"
-            />
-            {errors.full_name && (
-              <p className="text-red-500 text-sm mt-1">{errors.full_name}</p>
-            )}
-          </div>
+    <div className="min-h-screen bg-gradient-to-br from-blue-50 to-indigo-100 flex items-center justify-center p-4 sm:p-6 lg:p-8">
+      <div className="w-full max-w-2xl">
+        <Card className="shadow-xl">
+          <CardHeader className="text-center space-y-2">
+            <CardTitle className="text-3xl font-bold text-gray-900">
+              Create Account
+            </CardTitle>
+            <CardDescription className="text-lg text-gray-600">
+              Sign up to get started with your organization
+            </CardDescription>
+          </CardHeader>
+          
+          <CardContent>
+            <form onSubmit={handleSubmit} className="space-y-6">
+              {/* Personal Information Section */}
+              <div className="space-y-4">
+                <h3 className="text-lg font-semibold text-gray-900 border-b pb-2">
+                  Personal Information
+                </h3>
+                
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                  <div className="space-y-2">
+                    <Label htmlFor="full_name" className="text-sm font-medium text-gray-700">
+                      Full Name *
+                    </Label>
+                    <Input
+                      id="full_name"
+                      type="text"
+                      name="full_name"
+                      value={formData.full_name}
+                      onChange={handleInputChange}
+                      placeholder="John Doe"
+                      className={errors.full_name ? 'border-red-500 focus-visible:ring-red-500' : ''}
+                    />
+                    {errors.full_name && (
+                      <p className="text-red-500 text-sm">{errors.full_name}</p>
+                    )}
+                  </div>
 
-          <div>
-            <label className="block text-sm font-medium text-gray-700 mb-1">
-              Email Address *
-            </label>
-            <input
-              type="email"
-              name="email"
-              value={formData.email}
-              onChange={handleInputChange}
-              className={`w-full px-3 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 ${
-                errors.email ? 'border-red-500' : 'border-gray-300'
-              }`}
-              placeholder="john@example.com"
-            />
-            {errors.email && (
-              <p className="text-red-500 text-sm mt-1">{errors.email}</p>
-            )}
-          </div>
-
-          {/* <div>
-            <label className="block text-sm font-medium text-gray-700 mb-1">
-              Role *
-            </label>
-            <select
-              name="role"
-              value={formData.role}
-              onChange={handleInputChange}
-              className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
-            >
-              <option value={UserRole.USER}>User</option>
-              <option value={UserRole.TEAM}>Team Member</option>
-              <option value={UserRole.ADMIN}>Admin</option>
-            </select>
-          </div> */}
-
-          <div>
-            <label className="block text-sm font-medium text-gray-700 mb-1">
-              Password *
-            </label>
-            <input
-              type="password"
-              name="password"
-              value={formData.password}
-              onChange={handleInputChange}
-              className={`w-full px-3 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 ${
-                errors.password ? 'border-red-500' : 'border-gray-300'
-              }`}
-              placeholder="••••••••"
-            />
-            {errors.password && (
-              <p className="text-red-500 text-sm mt-1">{errors.password}</p>
-            )}
-          </div>
-
-          <div>
-            <label className="block text-sm font-medium text-gray-700 mb-1">
-              Confirm Password *
-            </label>
-            <input
-              type="password"
-              name="confirm_password"
-              value={formData.confirm_password}
-              onChange={handleInputChange}
-              className={`w-full px-3 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 ${
-                errors.confirm_password ? 'border-red-500' : 'border-gray-300'
-              }`}
-              placeholder="••••••••"
-            />
-            {errors.confirm_password && (
-              <p className="text-red-500 text-sm mt-1">{errors.confirm_password}</p>
-            )}
-          </div>
-
-          <Button
-            type="submit"
-            disabled={isLoading}
-            className="w-full"
-          >
-            {isLoading ? (
-              <div className="flex items-center space-x-2">
-                <Loader className="w-4 h-4" />
-                <span>Creating Account...</span>
+                  <div className="space-y-2">
+                    <Label htmlFor="email" className="text-sm font-medium text-gray-700">
+                      Email Address *
+                    </Label>
+                    <Input
+                      id="email"
+                      type="email"
+                      name="email"
+                      value={formData.email}
+                      onChange={handleInputChange}
+                      placeholder="john@example.com"
+                      className={errors.email ? 'border-red-500 focus-visible:ring-red-500' : ''}
+                    />
+                    {errors.email && (
+                      <p className="text-red-500 text-sm">{errors.email}</p>
+                    )}
+                  </div>
+                </div>
               </div>
-            ) : (
-              'Create Account'
-            )}
-          </Button>
-        </form>
 
-        <div className="text-center">
-          <p className="text-sm text-gray-600">
-            Already have an account?{' '}
-            <button
-              onClick={() => navigate('/login')}
-              className="text-blue-600 hover:text-blue-800 font-medium"
-            >
-              Sign in
-            </button>
-          </p>
-        </div>
+              {/* Organization Information Section */}
+              <div className="space-y-4">
+                <h3 className="text-lg font-semibold text-gray-900 border-b pb-2">
+                  Organization Details
+                </h3>
+                
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                  <div className="space-y-2">
+                    <Label htmlFor="organization_name" className="text-sm font-medium text-gray-700">
+                      Organization Name *
+                    </Label>
+                    <Input
+                      id="organization_name"
+                      type="text"
+                      name="organization_name"
+                      value={formData.organization_name}
+                      onChange={handleInputChange}
+                      placeholder="Acme Corporation"
+                      className={errors.organization_name ? 'border-red-500 focus-visible:ring-red-500' : ''}
+                    />
+                    {errors.organization_name && (
+                      <p className="text-red-500 text-sm">{errors.organization_name}</p>
+                    )}
+                  </div>
+
+                  <div className="space-y-2">
+                    <Label htmlFor="organization_link" className="text-sm font-medium text-gray-700">
+                      Organization Website
+                    </Label>
+                    <Input
+                      id="organization_link"
+                      type="url"
+                      name="organization_link"
+                      value={formData.organization_link}
+                      onChange={handleInputChange}
+                      placeholder="https://example.com"
+                      className={errors.organization_link ? 'border-red-500 focus-visible:ring-red-500' : ''}
+                    />
+                    {errors.organization_link && (
+                      <p className="text-red-500 text-sm">{errors.organization_link}</p>
+                    )}
+                  </div>
+                </div>
+              </div>
+
+              {/* Password Section */}
+              <div className="space-y-4">
+                <h3 className="text-lg font-semibold text-gray-900 border-b pb-2">
+                  Security
+                </h3>
+                
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                  <div className="space-y-2">
+                    <Label htmlFor="password" className="text-sm font-medium text-gray-700">
+                      Password *
+                    </Label>
+                    <Input
+                      id="password"
+                      type="password"
+                      name="password"
+                      value={formData.password}
+                      onChange={handleInputChange}
+                      placeholder="••••••••"
+                      className={errors.password ? 'border-red-500 focus-visible:ring-red-500' : ''}
+                    />
+                    {errors.password && (
+                      <p className="text-red-500 text-sm">{errors.password}</p>
+                    )}
+                  </div>
+
+                  <div className="space-y-2">
+                    <Label htmlFor="confirm_password" className="text-sm font-medium text-gray-700">
+                      Confirm Password *
+                    </Label>
+                    <Input
+                      id="confirm_password"
+                      type="password"
+                      name="confirm_password"
+                      value={formData.confirm_password}
+                      onChange={handleInputChange}
+                      placeholder="••••••••"
+                      className={errors.confirm_password ? 'border-red-500 focus-visible:ring-red-500' : ''}
+                    />
+                    {errors.confirm_password && (
+                      <p className="text-red-500 text-sm">{errors.confirm_password}</p>
+                    )}
+                  </div>
+                </div>
+              </div>
+
+              <Button
+                type="submit"
+                disabled={isLoading}
+                className="w-full h-12 text-base font-medium"
+                size="lg"
+              >
+                {isLoading ? (
+                  <div className="flex items-center space-x-2">
+                    <Loader className="w-5 h-5 animate-spin" />
+                    <span>Creating Account...</span>
+                  </div>
+                ) : (
+                  'Create Account'
+                )}
+              </Button>
+            </form>
+
+            <div className="mt-6 text-center">
+              <p className="text-sm text-gray-600">
+                Already have an account?{' '}
+                <button
+                  onClick={() => navigate('/login')}
+                  className="text-blue-600 hover:text-blue-800 font-medium transition-colors"
+                >
+                  Sign in
+                </button>
+              </p>
+            </div>
+          </CardContent>
+        </Card>
       </div>
     </div>
   );
