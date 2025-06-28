@@ -62,3 +62,23 @@ export interface InviteLinkInterface {
     expires_at: string;
     }
 }
+
+export interface TeamMemberInterface {
+  id: string;
+  username: string;
+  role: UserRole;
+  is_expired: boolean;
+  is_valid: boolean;
+  used_by: {
+    id: string;
+    username: string;
+    full_name: string;
+  } | null;
+  created_at: string;
+  expires_at: string;
+}
+export interface TeamMemberResponse {
+  invite_links: TeamMemberInterface[];
+  message: string;
+  success: boolean;
+}

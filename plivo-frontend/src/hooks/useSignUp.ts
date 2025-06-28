@@ -9,8 +9,9 @@ import {
   validateOrganizationName,
   validateUrl
 } from '../_helpers/validators';
-import { useAppDispatch } from '@/store';
+import { useDispatch } from 'react-redux';
 import { getUser, signUp } from '@/_redux/userSlice';
+import type { AppDispatch } from '@/store';
 
 
 function useSignUp() {
@@ -26,7 +27,7 @@ function useSignUp() {
     organization_link: '',
   });
   const [errors, setErrors] = useState<Partial<SignUpFormData>>({});
-const dispatch = useAppDispatch()
+const dispatch = useDispatch<AppDispatch>()
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) => {
     const { name, value } = e.target;
     setFormData(prev => ({

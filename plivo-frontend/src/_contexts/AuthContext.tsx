@@ -1,8 +1,9 @@
 import type { UserInterface } from "@/_constants/Interfaces/UserInterfaces";
 import { getUser } from "@/_redux/userSlice";
-import { useAppDispatch, useAppSelector, type RootState } from "@/store";
+import { useDispatch, useSelector } from "react-redux";
 import React, { createContext, useEffect, useContext } from "react";
 import type { ReactNode } from "react";
+import type { AppDispatch, RootState } from "@/store";
 
 interface AuthContextType {
   user: UserInterface | null;
@@ -16,8 +17,8 @@ interface AuthProviderProps {
 }
 
 export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
-  const dispatch = useAppDispatch();
-  const { user, isLoading } = useAppSelector((state: RootState) => state.user);
+  const dispatch = useDispatch<AppDispatch>();
+  const { user, isLoading } = useSelector((state: RootState) => state.auth);
   useEffect(() => {
     if(!isLoading) {
       fetchUser();

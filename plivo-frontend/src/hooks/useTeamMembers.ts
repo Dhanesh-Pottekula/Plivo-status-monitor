@@ -1,10 +1,13 @@
-import { generateInviteLink } from '@/_redux/userSlice';
-import { useDispatch } from 'react-redux';
-import React, { useState } from 'react'
-import type { InviteLinkInterface } from '@/_constants/Interfaces/UserInterfaces';
+import { generateInviteLink, getTeamMembers } from '@/_redux/userSlice';
+    import React, { useEffect, useState } from 'react'
+import { useDispatch, useSelector } from 'react-redux';
+import type { AppDispatch, RootState } from '@/store';
  
 function useTeamMembers() {
-   const dispatch = useDispatch();
+   const dispatch = useDispatch<AppDispatch>();
+   const { teamMembers } = useSelector((state: RootState) => state.auth);
+
+
    const [username, setUsername] = useState('');
    const [copied, setCopied] = useState(false);
    const [openInviteLinkModal, setOpenInviteLinkModal] = useState(false);
@@ -12,6 +15,24 @@ function useTeamMembers() {
    const [inviteLink, setInviteLink] = useState('');
    const [error, setError] = useState('');
    
+   useEffect(() => {
+    const timeout = setTimeout(() => {
+      getTeamMembersList();
+    }, 0);
+  
+    return () => clearTimeout(timeout); // Cleanup to avoid memory leaks
+  }, []);
+  
+
+    const getTeamMembersList = async () => {
+      try {
+console.log("getTeamMembersList")
+        await dispatch(getTeamMembers())
+      } catch (error) {
+        console.error('Failed to get team members:', error);
+      } 
+    }
+
    const handleSubmit = async (e: React.FormEvent) => {
      e.preventDefault();
      if (!username.trim()) return;
@@ -19,9 +40,9 @@ function useTeamMembers() {
      setError('');
      setInviteLink('');
      try {
-       const response = await dispatch(generateInviteLink({username: username.trim()})) as unknown as  InviteLinkInterface;
-       setInviteLink(response.inviteLink);
-     } catch (err) {
+       const response = await dispatch(generateInviteLink({username: username.trim()})).unwrap();
+       setInviteLink(response.invite_url);
+     } catch {
        setError('Failed to generate invite link');
      } finally {
        setIsLoading(false);
@@ -65,7 +86,8 @@ function useTeamMembers() {
    handleSubmit,
    handleCopyLink,
    handleCloseModal,
-   openModal
+   openModal,
+   teamMembers
   }
 }
 

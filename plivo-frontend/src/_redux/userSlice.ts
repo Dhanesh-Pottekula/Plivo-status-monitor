@@ -2,7 +2,7 @@ import { createAsyncThunk, createSlice, type PayloadAction } from "@reduxjs/tool
 
 import { apiUrls } from "../config/apiUrls";
 import axiosNodeInstance from "@/config/axios.config";
-import type { SignUpFormData, UserInterface, InviteLinkInterface } from "@/_constants/Interfaces/UserInterfaces";
+import type { SignUpFormData, UserInterface, InviteLinkInterface, TeamMemberInterface, TeamMemberResponse } from "@/_constants/Interfaces/UserInterfaces";
 
 
 
@@ -11,6 +11,7 @@ interface InitialState {
   isLoading: boolean;
   user: UserInterface | null;
   error: string | null;
+  teamMembers: TeamMemberInterface[] | [];
 }
 export interface LoginFormData {
   username: string;
@@ -20,6 +21,7 @@ const initialState: InitialState = {
   isLoading: false,
   user: null,
   error: null,
+  teamMembers: [],
 }
 
 // Async Thunks
@@ -71,6 +73,14 @@ export const generateInviteLink = createAsyncThunk<InviteLinkInterface, {usernam
   }
 );  
 
+export const getTeamMembers = createAsyncThunk<TeamMemberResponse, void>(
+  "auth/getTeamMembers",
+  async () => {
+      const res = await axiosNodeInstance.get(apiUrls.auth.getTeamMembers);
+      return res.data;
+  }
+);
+
 export const authSlice = createSlice({
   name: "auth",
   initialState,
@@ -82,36 +92,54 @@ export const authSlice = createSlice({
     },
   },
   extraReducers: (builder) => {
-    builder
+
       // Get User
-      .addCase(getUser.pending, (state) => {
+      builder.addCase(getUser.pending, (state) => {
         state.isLoading = true;
         state.error = null;
       })
-      .addCase(getUser.fulfilled, (state, action: PayloadAction<UserInterface>) => {
+      builder.addCase(getUser.fulfilled, (state, action: PayloadAction<UserInterface>) => {
         state.isLoading = false;
         state.user = action.payload;
       })
-      .addCase(getUser.rejected, (state, action) => {
+      builder.addCase(getUser.rejected, (state, action) => {
         state.isLoading = false;
         state.error = action.payload as string;
       })
 
       // Sign Up
-      .addCase(signUp.pending, (state) => {
+      builder.addCase(signUp.pending, (state) => {
         state.isLoading = true;
         state.error = null;
       })
-      .addCase(signUp.fulfilled, (state, action: PayloadAction<UserInterface>) => {
+      builder.addCase(signUp.fulfilled, (state, action: PayloadAction<UserInterface>) => {
         state.isLoading = false;
         state.user = action.payload;
       })
-      .addCase(signUp.rejected, (state, action) => {
+      builder.addCase(signUp.rejected, (state, action) => {
         state.isLoading = false;
         state.error = action.payload as string;
       })
 
+      //  get team members
+  
+      builder.addCase(getTeamMembers.fulfilled, (state, action: PayloadAction<TeamMemberResponse>) => {
+        state.isLoading = false;  
+        state.teamMembers = action.payload.invite_links;
+      })
+
       // Generate Invite Link
+      builder.addCase(generateInviteLink.pending, (state) => {
+        state.isLoading = true;
+        state.error = null;
+      });
+      builder.addCase(generateInviteLink.fulfilled, (state) => {
+        state.isLoading = false;
+      });
+      builder.addCase(generateInviteLink.rejected, (state, action) => {
+        state.isLoading = false;
+        state.error = action.payload as string;
+      });
   },
 });
 

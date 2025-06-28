@@ -12,6 +12,7 @@ import { Provider } from "react-redux";
 import { store } from "./store";
 import { appRoutes } from "./config/appRoutes";
 import AdminDashboard from "./pages/AdminDashboard";
+import TeamMembers from "./pages/TeamMembers";
 // App Routes component
 const AppRoutes: React.FC = () => {
   return (
@@ -28,6 +29,7 @@ const AppRoutes: React.FC = () => {
         {/* Admin routes */}
         <Route path="/" element={<AdminRoute />}>
           <Route path={appRoutes.admin_dashboard} element={<AdminDashboard />} /> 
+          <Route path={appRoutes.team_members} element={<TeamMembers />} />
         </Route>
 
         {/* Common routes */}

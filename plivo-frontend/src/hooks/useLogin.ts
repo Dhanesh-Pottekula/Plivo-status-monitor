@@ -1,10 +1,11 @@
 import React, { useState } from 'react'
 import { validateEmail, validatePassword } from '../_helpers/validators'
-import { useAppDispatch } from '@/store'
+import { useDispatch } from 'react-redux'
 import { getUser, login, type LoginFormData } from '@/_redux/userSlice'
+import type { AppDispatch } from '@/store'
 
 function useLogin() {
-    const dispatch = useAppDispatch()
+    const dispatch = useDispatch<AppDispatch> ()
     const [formData, setFormData] = useState({
         username: '',
         password: ''
