@@ -1,26 +1,19 @@
-from django.shortcuts import render
-from django.http import HttpResponse, JsonResponse
-from django.contrib.auth import authenticate, login, logout
-from django.views.decorators.csrf import csrf_exempt
-from django.utils.decorators import method_decorator
-from django.views import View
-from django.contrib.auth.hashers import make_password
+from django.contrib.auth import authenticate
 from rest_framework import status
 from rest_framework.decorators import api_view, permission_classes
 from rest_framework.permissions import AllowAny, IsAuthenticated
 from rest_framework.response import Response
 from rest_framework_simplejwt.tokens import AccessToken
-from rest_framework_simplejwt.views import TokenObtainPairView, TokenRefreshView
 from django.conf import settings
 from django.utils import timezone
 from datetime import timedelta
-import json
-import re
 from .models import User, Organization, InviteLink
 from .validators import (
      validate_signup_data, 
     validate_login_data, validate_profile_fields,
 )
+from .permissions import IsOrganizationAdmin, IsAdmin, IsTeamMember, IsTeamMemberWithAccess, IsAdminOrAuthenticated
+from .authentication import CookieJWTAuthentication
 
 
 def public_endpoint(view_func):
@@ -194,7 +187,7 @@ def login_view(request):
 
 
 @api_view(['POST'])
-@permission_classes([IsAuthenticated])
+@permission_classes([AllowAny])
 def logout_view(request):
     """
     User logout endpoint that clears JWT token from cookie
@@ -220,7 +213,7 @@ def user_profile_view(request):
 
 
 @api_view(['GET'])
-@permission_classes([IsAuthenticated])
+@permission_classes([AllowAny])
 def get_organizations_view(request):
     """
     Get all organizations (for admin users) or user's organization
@@ -302,7 +295,7 @@ def update_profile_view(request):
 
 
 @api_view(['POST'])
-@permission_classes([IsAuthenticated])
+@permission_classes([IsOrganizationAdmin])
 def invite_url_team_member_view(request):
     """Create a unique URL for team member to join the organization valid for 1 day"""
     try:
@@ -399,17 +392,10 @@ def verify_invite_token_view(request, token):
 
 
 @api_view(['GET'])
-@permission_classes([IsAuthenticated])
+@permission_classes([IsOrganizationAdmin])
 def get_team_members_view(request):
     """Get all team members of the current user"""
     try:
-        # Only organization admins can view invite links
-        if not request.user.is_organization_admin and request.user.role != 'admin':
-            return Response(
-                {'error': 'You do not have permission to view invite links'}, 
-                status=status.HTTP_403_FORBIDDEN
-            )
-        
         invite_links = InviteLink.objects.filter(
             created_by=request.user,
             organization=request.user.organization,
@@ -446,17 +432,10 @@ def get_team_members_view(request):
 
 
 @api_view(['POST'])
-@permission_classes([IsAuthenticated])
+@permission_classes([IsOrganizationAdmin])
 def update_user_access_view(request):
     """Grant access to a team member"""
     try:
-        # Only organization admins can grant access
-        if not request.user.is_organization_admin and request.user.role != 'admin':
-            return Response(
-                {'error': 'You do not have permission to grant access'}, 
-                status=status.HTTP_403_FORBIDDEN
-            )
-        
         data = request.data
         user_id = data.get('user_id')
         has_access = data.get('has_access')
