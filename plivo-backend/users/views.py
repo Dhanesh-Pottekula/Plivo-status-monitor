@@ -20,16 +20,6 @@ from .validators import (
     validate_login_data, validate_organization_data, validate_profile_fields
 )
 
-
-def public_endpoint(view_func):
-    """
-    Decorator to mark a view as a public endpoint that doesn't require authentication.
-    This can be used as an alternative to adding URLs to PUBLIC_URLS list.
-    """
-    view_func.is_public = True
-    return view_func
-
-
 def get_user_data(user):
     """Convert user object to dictionary"""
     return {
@@ -216,62 +206,6 @@ def user_profile_view(request):
 
 
 @api_view(['GET'])
-@permission_classes([AllowAny])
-@public_endpoint
-def health_check_view(request):
-    """
-    Health check endpoint
-    """
-    return Response({'status': 'healthy'}, status=status.HTTP_200_OK)
-
-
-@api_view(['POST'])
-@permission_classes([IsAuthenticated])
-def create_organization_view(request):
-    """
-    Create a new organization
-    """
-    try:
-        data = request.data
-        
-        # Validate organization data
-        validation_errors = validate_organization_data(data)
-        if validation_errors:
-            return Response({'error': validation_errors}, status=status.HTTP_400_BAD_REQUEST)
-        
-        # Create organization
-        organization = Organization.objects.create(
-            name=data['name'],
-            domain=data.get('domain', ''),
-            is_active=True
-        )
-        
-        # Update user's organization if they don't have one
-        if not request.user.organization:
-            request.user.organization = organization
-            request.user.save()
-        
-        return Response({
-            'message': 'Organization created successfully',
-            'success': True,
-            'organization': {
-                'id': str(organization.id),
-                'name': organization.name,
-                'domain': organization.domain,
-                'created_at': organization.created_at.isoformat(),
-                'updated_at': organization.updated_at.isoformat(),
-                'is_active': organization.is_active
-            }
-        }, status=status.HTTP_201_CREATED)
-        
-    except Exception as e:
-        return Response(
-            {'error': f'Organization creation failed: {str(e)}'}, 
-            status=status.HTTP_400_BAD_REQUEST
-        )
-
-
-@api_view(['GET'])
 @permission_classes([IsAuthenticated])
 def get_organizations_view(request):
     """
@@ -350,3 +284,12 @@ def update_profile_view(request):
             {'error': f'Profile update failed: {str(e)}'}, 
             status=status.HTTP_400_BAD_REQUEST
         )
+    
+
+
+@api_view(['POST'])
+@permission_classes([IsAuthenticated])
+def invite_url_team_member_view(request):
+    """create the unique url for team member to join the organization valid for 1 day"""
+    data = request.data
+    username = data.get('username')

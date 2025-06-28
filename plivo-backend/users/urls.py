@@ -14,7 +14,6 @@ urlpatterns = [
     
     # Organization endpoints
     path('organizations/', views.get_organizations_view, name='get_organizations'),
-    path('organizations/create/', views.create_organization_view, name='create_organization'),
     
     # Health check
     path('health/', views.health_check_view, name='health_check'),
