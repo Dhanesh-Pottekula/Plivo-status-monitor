@@ -8,5 +8,6 @@ export const apiUrls = {
         generateInviteLink: '/api/invite/create/',
         getTeamMembers: '/api/invite/list/',
         logout: '/api/auth/logout/',
+        verifyInviteToken: '/api/invite/verify/',
     }
 }

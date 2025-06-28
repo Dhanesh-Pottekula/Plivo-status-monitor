@@ -139,6 +139,9 @@ CSRF_EXEMPT_URLS = [
 ]
 CORS_ALLOW_CREDENTIALS = True
 
+# Frontend URL for invite links
+FRONTEND_URL = 'http://localhost:5173'  # Vite dev server URL
+
 # REST Framework settings
 REST_FRAMEWORK = {
     'DEFAULT_AUTHENTICATION_CLASSES': [

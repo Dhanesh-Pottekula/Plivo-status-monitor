@@ -125,9 +125,10 @@ def validate_signup_data(data):
         errors['full_name'] = full_name_error
     
     # Organization name validation
-    org_valid, org_error = validate_organization_name(data.get('organization_name'))
-    if not org_valid:
-        errors['organization_name'] = org_error
+    if (not data.get('token')):
+        org_valid, org_error = validate_organization_name(data.get('organization_name'))
+        if not org_valid:
+            errors['organization_name'] = org_error
     
     # Role validation
     role_valid, role_error = validate_user_role(data.get('role', 'user'))

@@ -7,7 +7,7 @@ import { Loader } from 'lucide-react';
 import useSignUp from '@/hooks/useSignUp';
 
 const SignUp: React.FC = () => {
-  const { isLoading, formData, errors, handleInputChange, handleSubmit, handleLoginClick } = useSignUp();
+  const { isLoading, formData, errors, handleInputChange, handleSubmit, handleLoginClick ,token} = useSignUp();
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-blue-50 to-indigo-100 flex items-center justify-center p-4 sm:p-6 lg:p-8">
@@ -18,8 +18,11 @@ const SignUp: React.FC = () => {
               Create Account
             </CardTitle>
             <CardDescription className="text-lg text-gray-600">
-              Sign up to get started with your organization
+            {token ? "You are signing up as a team member":'Sign up to get started with your organization'}
             </CardDescription>
+            {errors.token && (
+              <p className="text-red-500 text-sm text-center">{errors.token}</p>
+            )}
           </CardHeader>
           
           <CardContent>
@@ -59,6 +62,7 @@ const SignUp: React.FC = () => {
                       name="username"
                       value={formData.username}
                       onChange={handleInputChange}
+                      disabled={token?true:false}
                       placeholder="john@example.com"
                       className={errors.username ? 'border-red-500 focus-visible:ring-red-500' : ''}
                     />
@@ -88,6 +92,7 @@ const SignUp: React.FC = () => {
                       onChange={handleInputChange}
                       placeholder="Acme Corporation"
                       className={errors.organization_name ? 'border-red-500 focus-visible:ring-red-500' : ''}
+                      disabled={token?true:false}
                     />
                     {errors.organization_name && (
                       <p className="text-red-500 text-sm">{errors.organization_name}</p>
@@ -106,6 +111,7 @@ const SignUp: React.FC = () => {
                       onChange={handleInputChange}
                       placeholder="https://example.com"
                       className={errors.organization_link ? 'border-red-500 focus-visible:ring-red-500' : ''}
+                      disabled={token?true:false}
                     />
                     {errors.organization_link && (
                       <p className="text-red-500 text-sm">{errors.organization_link}</p>
@@ -127,7 +133,7 @@ const SignUp: React.FC = () => {
                       name="password"
                       value={formData.password}
                       onChange={handleInputChange}
-                      placeholder="••••••••"
+                      placeholder=""
                       className={errors.password ? 'border-red-500 focus-visible:ring-red-500' : ''}
                     />
                     {errors.password && (
@@ -145,7 +151,7 @@ const SignUp: React.FC = () => {
                       name="confirm_password"
                       value={formData.confirm_password}
                       onChange={handleInputChange}
-                      placeholder="••••••••"
+                      placeholder=""
                       className={errors.confirm_password ? 'border-red-500 focus-visible:ring-red-500' : ''}
                     />
                     {errors.confirm_password && (

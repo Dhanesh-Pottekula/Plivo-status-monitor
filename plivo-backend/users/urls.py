@@ -17,8 +17,8 @@ urlpatterns = [
     
     # Invite link endpoints
     path('invite/create/', views.invite_url_team_member_view, name='create_invite'),
-    path('invite/verify/', views.verify_invite_token_view, name='verify_invite'),
-    path('invite/list/', views.get_invite_links_view, name='get_invite_links'),
+    path('invite/verify/<str:token>/', views.verify_invite_token_view, name='verify_invite'),
+    path('invite/list/', views.get_team_members_view, name='get_team_members'),
     
 
 ]

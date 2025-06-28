@@ -3,6 +3,7 @@ import axiosNodeInstance from '@/config/axios.config';
 import { apiUrls } from '@/config/apiUrls';
 import { userConstants } from '../constants/user/user.constants';
 import type { SignUpFormData } from '@/_constants/Interfaces/UserInterfaces';
+import { handleError } from '@/_helpers/commonFunctions';
 
 // Action Types
 export interface UserActionTypes {
@@ -10,16 +11,6 @@ export interface UserActionTypes {
   payload?: unknown;
 }
 
-// Helper function for error handling
-const handleError = (error: unknown) => {
-  if (error && typeof error === 'object' && 'response' in error) {
-    const response = (error as { response?: { data?: { message?: string } } }).response;
-    if (response?.data?.message) {
-      return { message: response.data.message };
-    }
-  }
-  return { message: 'Something went wrong' };
-};
 
 // Get User Action
 export const getUserAction = () => async (dispatch: Dispatch<UserActionTypes>) => {
@@ -167,3 +158,27 @@ export const logoutAction = () => async (dispatch: Dispatch<UserActionTypes>) =>
   }
 };
 
+// Verify Invite Token Action
+
+export const verifyInviteTokenAction = (token: string) => async (dispatch: Dispatch<UserActionTypes>) => {
+  dispatch({
+    type: userConstants.VERIFY_INVITE_TOKEN.REQUEST,
+    payload: null,
+  });
+  
+  try {
+    const response = await axiosNodeInstance.get(`${apiUrls.auth.verifyInviteToken}${token}`);
+    dispatch({
+      type: userConstants.VERIFY_INVITE_TOKEN.SUCCESS,
+      payload: response.data,
+    });
+    return response.data;
+  } catch (error) {
+    const errorMessage = handleError(error);
+    dispatch({
+      type: userConstants.VERIFY_INVITE_TOKEN.FAILURE,
+      payload: errorMessage,
+    });
+    return errorMessage;
+  }
+};

@@ -39,6 +39,7 @@ export interface SignUpFormData {
   role: UserRole;
   organization_name: string;
   organization_link: string;
+  token?: string;
 }
 
 export interface SignUpResponse {
@@ -68,11 +69,13 @@ export interface TeamMemberInterface {
   username: string;
   role: UserRole;
   is_expired: boolean;
+  token: string;
   is_valid: boolean;
   used_by: {
     id: string;
     username: string;
     full_name: string;
+    has_access: boolean;
   } | null;
   created_at: string;
   expires_at: string;

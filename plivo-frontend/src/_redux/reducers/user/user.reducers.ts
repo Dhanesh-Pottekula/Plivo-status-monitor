@@ -1,6 +1,6 @@
 import type { UserActionTypes } from "@/_redux/actions/user.actions";
 import { userConstants } from "../../constants/user/user.constants";
-import type { TeamMemberInterface, UserInterface } from "@/_constants/Interfaces/UserInterfaces";
+import type { TeamMemberInterface, UserInterface, TeamMemberResponse } from "@/_constants/Interfaces/UserInterfaces";
 
 interface UserState {
   type?: string | null;
@@ -60,12 +60,14 @@ export const getTeamMembersListReducer = (
         type: "alert-success",
         message: "Loading...",
       };
-    case userConstants.GET_TEAM_MEMBERS.SUCCESS:
+    case userConstants.GET_TEAM_MEMBERS.SUCCESS: {
+      const response = action.payload as TeamMemberResponse;
       return {
         type: "alert-success",
-        message: action.payload as string,
-        teamMembers: action.payload as TeamMemberInterface[],
+        message: response.message,
+        teamMembers: response.invite_links,
       };
+    }
     case userConstants.GET_TEAM_MEMBERS.FAILURE:
       return {
         type: "alert-failure",

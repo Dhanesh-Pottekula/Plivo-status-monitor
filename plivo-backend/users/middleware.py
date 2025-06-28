@@ -84,7 +84,7 @@ class JWTAuthenticationMiddleware(MiddlewareMixin):
             path = path[:-1]
         
         # Add admin path to skip list (without trailing slashes for comparison)
-        skip_paths = ['/admin', '/api/auth/signup', '/api/auth/login', '/api/health']
+        skip_paths = ['/admin', '/api/auth/signup', '/api/auth/login', '/api/health', '/api/invite/verify']
         
         return any(path.startswith(skip_path) for skip_path in skip_paths) 
 

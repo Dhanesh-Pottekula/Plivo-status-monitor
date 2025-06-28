@@ -69,11 +69,11 @@ def signup_view(request):
         invite_link = None
         # Only validate invite code for team members
         if data.get('role') == 'team':
-            if not data.get('invite_code'):
+            if not data.get('token'):
                 return Response({'error': 'invite code is required'}, status=status.HTTP_400_BAD_REQUEST)
             
             try:
-                invite_link = InviteLink.objects.get(token=data.get('invite_code'))
+                invite_link = InviteLink.objects.get(token=data.get('token'))
                 if invite_link.username != data.get('username'):
                     return Response({'error': "invite code is not valid"}, status=status.HTTP_400_BAD_REQUEST)
                 
@@ -350,11 +350,10 @@ def invite_url_team_member_view(request):
 @api_view(['GET'])
 @permission_classes([AllowAny])
 @public_endpoint
-def verify_invite_token_view(request):
+def verify_invite_token_view(request, token):
     """Verify if an invite token is valid and return invite details"""
+    print(token)
     try:
-        token = request.data.get('token')
-        
         if not token:
             return Response(
                 {'error': 'Token is required'}, 
@@ -401,8 +400,8 @@ def verify_invite_token_view(request):
 
 @api_view(['GET'])
 @permission_classes([IsAuthenticated])
-def get_invite_links_view(request):
-    """Get all invite links created by the current user"""
+def get_team_members_view(request):
+    """Get all team members of the current user"""
     try:
         # Only organization admins can view invite links
         if not request.user.is_organization_admin and request.user.role != 'admin':
@@ -413,7 +412,8 @@ def get_invite_links_view(request):
         
         invite_links = InviteLink.objects.filter(
             created_by=request.user,
-            organization=request.user.organization
+            organization=request.user.organization,
+            used_by__isnull=False
         ).order_by('-created_at')
         
         invite_links_data = [{
@@ -422,10 +422,12 @@ def get_invite_links_view(request):
             'role': invite.role,
             'is_expired': invite.is_expired,
             'is_valid': invite.is_valid,
+            "token": invite.token,
             'used_by': {
                 'id': str(invite.used_by.id),
                 'username': invite.used_by.username,
-                'full_name': invite.used_by.full_name
+                'full_name': invite.used_by.full_name,
+                'has_access': invite.used_by.has_access
             } if invite.used_by else None,
             'created_at': invite.created_at.isoformat(),
             'expires_at': invite.expires_at.isoformat()

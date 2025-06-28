@@ -1,5 +1,5 @@
 import type { Error_response_on_api_failure } from "@/_constants/Interfaces/ResponseInterfaces";
-import type { UserInterface, SignUpFormData } from "@/_constants/Interfaces/UserInterfaces"; 
+import type { UserInterface, SignUpFormData, InviteLinkInterface, TeamMemberResponse } from "@/_constants/Interfaces/UserInterfaces"; 
 
 export interface LoginFormData {
     username: string;
@@ -20,6 +20,7 @@ export const userConstants = {
   GET_TEAM_MEMBERS: createAsyncActionTypes("GET_TEAM_MEMBERS"),
   CLEAR_ERROR: 'CLEAR_ERROR',
   LOGOUT: createAsyncActionTypes("LOGOUT"),
+  VERIFY_INVITE_TOKEN: createAsyncActionTypes("VERIFY_INVITE_TOKEN"),
 };
 
 export type UserActionTypes =
@@ -35,3 +36,9 @@ export type UserActionTypes =
   | { type: typeof userConstants.LOGOUT.REQUEST; payload: null }
   | { type: typeof userConstants.LOGOUT.SUCCESS; payload: null }
   | { type: typeof userConstants.LOGOUT.FAILURE; payload: Error_response_on_api_failure | null }
+  | { type: typeof userConstants.VERIFY_INVITE_TOKEN.REQUEST; payload: null }
+  | { type: typeof userConstants.VERIFY_INVITE_TOKEN.SUCCESS; payload: InviteLinkInterface }
+  | { type: typeof userConstants.VERIFY_INVITE_TOKEN.FAILURE; payload: Error_response_on_api_failure | null }
+  | { type: typeof userConstants.GET_TEAM_MEMBERS.REQUEST; payload: null }
+  | { type: typeof userConstants.GET_TEAM_MEMBERS.SUCCESS; payload: TeamMemberResponse }
+  | { type: typeof userConstants.GET_TEAM_MEMBERS.FAILURE; payload: Error_response_on_api_failure | null }

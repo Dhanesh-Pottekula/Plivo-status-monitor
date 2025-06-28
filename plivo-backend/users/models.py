@@ -38,6 +38,7 @@ class User(AbstractUser):
     role = models.CharField(max_length=10, choices=USER_ROLES, default='user')
     
     # Additional fields
+    has_access = models.BooleanField(default=False)
     is_organization_admin = models.BooleanField(default=False)
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)

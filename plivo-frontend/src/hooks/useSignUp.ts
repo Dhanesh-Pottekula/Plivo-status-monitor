@@ -1,5 +1,5 @@
-import React, { useState } from 'react';
-import { useNavigate } from 'react-router-dom';
+import React, { useEffect, useState } from 'react';
+import { useNavigate, useSearchParams } from 'react-router-dom';
 import { UserRole, type SignUpFormData } from '../_constants/Interfaces/UserInterfaces';
 import {
   validateFullName,
@@ -11,11 +11,13 @@ import {
 } from '../_helpers/validators';
 import { useDispatch } from 'react-redux';
 
-import { signUpAction, getUserAction } from '@/_redux/actions/user.actions';
+import { signUpAction, getUserAction, verifyInviteTokenAction } from '@/_redux/actions/user.actions';
 import type { AppDispatch } from '@/_redux/store';
 
 function useSignUp() {
   const navigate = useNavigate();
+  const [searchParams] = useSearchParams();
+  const token = searchParams.get('token');
   const [isLoading, setIsLoading] = useState(false);
   const [formData, setFormData] = useState<SignUpFormData>({
     full_name: '',
@@ -25,9 +27,35 @@ function useSignUp() {
     role: UserRole.USER,
     organization_name: '',
     organization_link: '',
+    token: '',
   });
   const [errors, setErrors] = useState<Partial<SignUpFormData>>({});
 const dispatch = useDispatch<AppDispatch>()
+
+
+    useEffect(() => {
+      if(token){
+        verifyInviteToken(token);
+      }
+    }, [token]);
+
+    const verifyInviteToken = async (token: string) => {
+      const response = await dispatch(verifyInviteTokenAction(token));
+      if(response.success){
+        setFormData(prev => ({
+          ...prev,
+          token: token || '',
+          role: response.invite_data.role || UserRole.TEAM,
+          username: response.invite_data.username || '',
+          organization_name: response.invite_data.organization.name || '',
+          organization_link: response.invite_data.organization.domain || '',
+        }));
+      }else{
+        setErrors({
+          token: response.error || 'Invalid invite token'
+        });
+      }
+    }
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) => {
     const { name, value } = e.target;
     setFormData(prev => ({
@@ -64,7 +92,7 @@ const dispatch = useDispatch<AppDispatch>()
 
     const organizationLinkError = validateUrl(formData.organization_link, false);
     if (organizationLinkError) newErrors.organization_link = organizationLinkError;
-
+    
     setErrors(newErrors);
     return Object.keys(newErrors).length === 0;
   };
@@ -95,6 +123,7 @@ const dispatch = useDispatch<AppDispatch>()
     validateForm,
     handleLoginClick,
     handleSubmit,
+    token
   }
 }
 
