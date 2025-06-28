@@ -10,21 +10,25 @@ import LoginPage from "./pages/LoginPage";
 import "./App.css";
 import { Provider } from "react-redux";
 import { store } from "./store";
+import { appRoutes } from "./config/appRoutes";
+import AdminDashboard from "./pages/AdminDashboard";
 // App Routes component
 const AppRoutes: React.FC = () => {
   return (
     <Routes>
       {/* Public routes */}
       <Route element={<PublicRoute />}>
-        <Route path="/login" element={<LoginPage />} />
-        <Route path="/signup" element={<SignUp />} />
+        <Route path={appRoutes.login} element={<LoginPage />} />
+        <Route path={appRoutes.signup} element={<SignUp />} />
       </Route>
-      <Route path="/dashboard" element={<BaseUrlComponent />} />
+      <Route path={appRoutes.dashboard} element={<BaseUrlComponent />} />
 
       {/* Private routes */}
       <Route path="/" element={<PrivateRoute />}>
         {/* Admin routes */}
-        <Route path="/" element={<AdminRoute />}></Route>
+        <Route path="/" element={<AdminRoute />}>
+          <Route path={appRoutes.admin_dashboard} element={<AdminDashboard />} /> 
+        </Route>
 
         {/* Common routes */}
       </Route>

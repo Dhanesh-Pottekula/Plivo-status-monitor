@@ -16,8 +16,7 @@ export interface Organization {
 export interface UserInterface {
   id: string;
   email: string;
-  first_name: string;
-  last_name: string;
+  full_name: string;
   phone?: string;
   address?: string;
   city?: string;

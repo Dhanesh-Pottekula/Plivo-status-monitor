@@ -1,24 +1,16 @@
 
 import { Navigate, Outlet } from "react-router-dom";
 import { useAuth } from "../_contexts/AuthContext";
+import { appRoutes } from "../config/appRoutes";
 
 const BaseUrlComponent = () => {
   const { user } = useAuth();
   console.log(user);
   if (!user?.id) {
-    return <Navigate replace to="/login" />;
+    return <Navigate replace to={appRoutes.login} />;
   }
   if (user?.role === "admin") {
-    return <Navigate replace to="/admin_dashboard" />;
-  }
-  if (user?.role === "teacher") {
-    return <Navigate replace to="/teacher_dashboard" />;
-  }
-  if (user?.role === "student") {
-    return <Navigate replace to="/student_dashboard" />;
-  }
-  if (user?.role === "parent") {
-    return <Navigate replace to="/parent_dashboard" />;
+    return <Navigate replace to={appRoutes.admin_dashboard} />;
   }
   return <Outlet />;
 };

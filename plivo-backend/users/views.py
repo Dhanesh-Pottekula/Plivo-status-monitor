@@ -35,8 +35,7 @@ def get_user_data(user):
     return {
         'id': str(user.id),
         'email': user.username,
-        'first_name': user.first_name,
-        'last_name': user.last_name,
+        'full_name': user.full_name,
         'organization': {
             'id': str(user.organization.id),
             'name': user.organization.name,
