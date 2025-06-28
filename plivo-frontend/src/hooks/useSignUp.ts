@@ -10,9 +10,9 @@ import {
   validateUrl
 } from '../_helpers/validators';
 import { useDispatch } from 'react-redux';
-import { getUser, signUp } from '@/_redux/userSlice';
-import type { AppDispatch } from '@/store';
 
+import { signUpAction, getUserAction } from '@/_redux/actions/user.actions';
+import type { AppDispatch } from '@/_redux/store';
 
 function useSignUp() {
   const navigate = useNavigate();
@@ -76,8 +76,8 @@ const dispatch = useDispatch<AppDispatch>()
 
     setIsLoading(true);
     try {
-      await dispatch(signUp(formData))
-      await dispatch(getUser())
+      await dispatch(signUpAction(formData))
+      await dispatch(getUserAction())
     } catch {
       setErrors({ username: 'Network error. Please try again.' });
     } finally {

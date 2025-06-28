@@ -1,9 +1,11 @@
 import type { UserInterface } from "@/_constants/Interfaces/UserInterfaces";
-import { getUser } from "@/_redux/userSlice";
+
 import { useDispatch, useSelector } from "react-redux";
 import React, { createContext, useEffect, useContext } from "react";
 import type { ReactNode } from "react";
-import type { AppDispatch, RootState } from "@/store";
+import type { AppDispatch, RootState } from "@/_redux/store";
+import { getUserAction } from "@/_redux/actions/user.actions";
+
 
 interface AuthContextType {
   user: UserInterface | null;
@@ -18,18 +20,18 @@ interface AuthProviderProps {
 
 export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
   const dispatch = useDispatch<AppDispatch>();
-  const { user, isLoading } = useSelector((state: RootState) => state.auth);
+  const { profileData, isProfileLoading } = useSelector((state: RootState) => state.getUserProfileReducer);
   useEffect(() => {
-    if(!isLoading) {
+    if(!isProfileLoading) {
       fetchUser();
     }
   }, []);
 
   const fetchUser = async () => {
-    dispatch(getUser());
+    dispatch(getUserAction());
   };
   return (
-    <AuthContext.Provider value={{ user, isLoading }}>
+    <AuthContext.Provider value={{ user: profileData||null, isLoading: isProfileLoading||false }}>
       {children}
     </AuthContext.Provider>
   );

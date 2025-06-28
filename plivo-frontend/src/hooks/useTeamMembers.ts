@@ -1,11 +1,11 @@
-import { generateInviteLink, getTeamMembers } from '@/_redux/userSlice';
+import { generateInviteLinkAction, getTeamMembersAction } from '@/_redux/actions/user.actions';
+import type { AppDispatch, RootState } from '@/_redux/store';
     import React, { useEffect, useState } from 'react'
 import { useDispatch, useSelector } from 'react-redux';
-import type { AppDispatch, RootState } from '@/store';
  
 function useTeamMembers() {
    const dispatch = useDispatch<AppDispatch>();
-   const { teamMembers } = useSelector((state: RootState) => state.auth);
+   const { teamMembers } = useSelector((state: RootState) => state.getTeamMembersListReducer);
 
 
    const [username, setUsername] = useState('');
@@ -27,7 +27,7 @@ function useTeamMembers() {
     const getTeamMembersList = async () => {
       try {
 console.log("getTeamMembersList")
-        await dispatch(getTeamMembers())
+        await dispatch(getTeamMembersAction())
       } catch (error) {
         console.error('Failed to get team members:', error);
       } 
@@ -40,7 +40,7 @@ console.log("getTeamMembersList")
      setError('');
      setInviteLink('');
      try {
-       const response = await dispatch(generateInviteLink({username: username.trim()})).unwrap();
+       const response = await dispatch(generateInviteLinkAction({username: username.trim()}));
        setInviteLink(response.invite_url);
      } catch {
        setError('Failed to generate invite link');

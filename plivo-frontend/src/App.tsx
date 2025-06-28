@@ -8,11 +8,11 @@ import AdminRoute from "./_helpers/AdminRoute";
 import SignUp from "./pages/SignUp";
 import LoginPage from "./pages/LoginPage";
 import "./App.css";
-import { Provider } from "react-redux";
-import { store } from "./store";
 import { appRoutes } from "./config/appRoutes";
+import { Provider } from "react-redux";
 import AdminDashboard from "./pages/AdminDashboard";
 import TeamMembers from "./pages/TeamMembers";
+import { store } from "./_redux/store";
 // App Routes component
 const AppRoutes: React.FC = () => {
   return (

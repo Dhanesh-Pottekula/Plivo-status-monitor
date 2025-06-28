@@ -1,8 +1,8 @@
 import React, { useState } from 'react'
 import { validateEmail, validatePassword } from '../_helpers/validators'
 import { useDispatch } from 'react-redux'
-import { getUser, login, type LoginFormData } from '@/_redux/userSlice'
-import type { AppDispatch } from '@/store'
+import { loginAction, getUserAction } from '@/_redux/actions/user.actions'
+import type { AppDispatch } from '@/_redux/store'
 
 function useLogin() {
     const dispatch = useDispatch<AppDispatch> ()
@@ -55,8 +55,8 @@ function useLogin() {
         setIsLoading(true)
         
         try {
-            await dispatch(login(formData as LoginFormData))
-            await dispatch(getUser())
+            await dispatch(loginAction(formData))
+            await dispatch(getUserAction())
         } catch (error) {
           console.error('Login failed:', error)
         } finally {
