@@ -8,6 +8,8 @@ import AdminRoute from "./_helpers/AdminRoute";
 import { LogIn } from "lucide-react";
 import SignUp from "./pages/SignUp";
 import "./App.css";
+import { Provider } from "react-redux";
+import { store } from "./store";
 // App Routes component
 const AppRoutes: React.FC = () => {
   return (
@@ -43,9 +45,12 @@ const AppRoutes: React.FC = () => {
 function App() {
   return (
     <BrowserRouter>
+     <Provider store={store}>
+
       <AuthProvider>
         <AppRoutes />
       </AuthProvider>
+     </Provider>
     </BrowserRouter>
   );
 }

@@ -1,0 +1,64 @@
+import { createAsyncThunk, createSlice, type PayloadAction } from "@reduxjs/toolkit";
+
+import { apiUrls } from "../config/apiUrls";
+import axiosNodeInstance from "@/config/axios.config";
+import type { UserInterface } from "@/_constants/Interfaces/UserInterfaces";
+
+
+
+
+interface InitialState {
+  isLoading: boolean;
+  user: UserInterface | null;
+  error: string | null;
+}
+
+const initialState: InitialState = {
+  isLoading: false,
+  user: null,
+  error: null,
+}
+
+
+// Async Thunks
+export const getUser = createAsyncThunk<UserInterface>(
+  "auth/getUser",
+  async (data, { rejectWithValue }) => {
+    try {
+      const res = await axiosNodeInstance.post(apiUrls.auth.getUser, data);
+      return res.data;
+    } catch (error: unknown) {
+      return rejectWithValue(error);
+    }
+  }
+);
+export const authSlice = createSlice({
+  name: "auth",
+  initialState,
+  reducers: {
+    logout: (state) => {
+      localStorage.removeItem("streetdine-customer");
+      state.user = null;
+      state.error = null;
+    },
+  },
+  extraReducers: (builder) => {
+    builder
+      // Create OTP
+      .addCase(getUser.pending, (state) => {
+        state.isLoading = true;
+        state.error = null;
+      })
+      .addCase(getUser.fulfilled, (state, action: PayloadAction<UserInterface>) => {
+        state.isLoading = false;
+        state.user = action.payload;
+      })
+      .addCase(getUser.rejected, (state, action) => {
+        state.isLoading = false;
+        state.error = action.payload as string;
+      })
+  },
+});
+
+export const { logout } = authSlice.actions;
+export const authReducer = authSlice.reducer;
