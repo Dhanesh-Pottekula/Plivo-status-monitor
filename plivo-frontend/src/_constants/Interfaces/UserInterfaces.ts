@@ -48,3 +48,17 @@ export interface SignUpResponse {
   success: boolean;
 }
 
+
+export interface InviteLinkInterface {
+  message: string;
+  success: boolean;
+  invite_url: string;
+  expires_at: string;
+  invite_data: {
+    id: string;
+    username: string;
+    role: UserRole;
+    created_at: string;
+    expires_at: string;
+    }
+}

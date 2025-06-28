@@ -6,7 +6,7 @@ import { UserRole } from '../_constants/Interfaces/UserInterfaces';
 import { Button } from './ui/button';
 import { Avatar, AvatarFallback, AvatarImage } from './ui/avatar';
 import { Separator } from './ui/separator';
-import { BarChart3Icon, LogOut } from 'lucide-react';
+import { BarChart3Icon, LogOut, UsersIcon } from 'lucide-react';
 
 interface SidebarProps {
   onClose?: () => void;
@@ -22,7 +22,14 @@ const Sidebar: React.FC<SidebarProps> = ({ onClose }) => {
       href: appRoutes.admin_dashboard,
       icon: <BarChart3Icon className="h-4 w-4" />,
       adminOnly: true
-    }
+    },
+    {
+      name: 'Team Members',
+      href: appRoutes.team_members,
+      icon: <UsersIcon className="h-4 w-4" />,
+      adminOnly: true
+    },
+
   ];
 
   const handleLinkClick = () => {

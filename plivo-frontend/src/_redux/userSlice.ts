@@ -2,7 +2,7 @@ import { createAsyncThunk, createSlice, type PayloadAction } from "@reduxjs/tool
 
 import { apiUrls } from "../config/apiUrls";
 import axiosNodeInstance from "@/config/axios.config";
-import type { SignUpFormData, UserInterface } from "@/_constants/Interfaces/UserInterfaces";
+import type { SignUpFormData, UserInterface, InviteLinkInterface } from "@/_constants/Interfaces/UserInterfaces";
 
 
 
@@ -21,7 +21,6 @@ const initialState: InitialState = {
   user: null,
   error: null,
 }
-
 
 // Async Thunks
 export const getUser = createAsyncThunk<UserInterface>(
@@ -59,6 +58,18 @@ export const login = createAsyncThunk<UserInterface, LoginFormData>(
     }
   }
 );
+
+export const generateInviteLink = createAsyncThunk<InviteLinkInterface, {username: string}>(
+  "auth/generateInviteLink",
+  async (data, { rejectWithValue }) => {
+    try {
+      const res = await axiosNodeInstance.post(apiUrls.auth.generateInviteLink, data);
+      return res.data;
+    } catch (error: unknown) {
+      return rejectWithValue(error);
+    }
+  }
+);  
 
 export const authSlice = createSlice({
   name: "auth",
@@ -99,6 +110,8 @@ export const authSlice = createSlice({
         state.isLoading = false;
         state.error = action.payload as string;
       })
+
+      // Generate Invite Link
   },
 });
 

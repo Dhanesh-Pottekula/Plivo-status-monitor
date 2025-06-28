@@ -5,5 +5,6 @@ export const apiUrls = {
         getUser: '/api/auth/profile/',
         signUp: '/api/auth/signup',
         login: '/api/auth/login',
+        generateInviteLink: '/api/invite/create/',
     }
 }
