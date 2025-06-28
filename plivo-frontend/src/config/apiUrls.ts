@@ -3,5 +3,6 @@ export const apiUrls = {
     auth: {
         otpGenerate: '/api/auth/otp-generate',
         getUser: '/api/auth/get-user',
+        signUp: '/api/auth/signup',
     }
 }

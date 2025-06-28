@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { UserRole } from '../_constants/Interfaces/UserInterfaces';
+import { UserRole, type SignUpFormData } from '../_constants/Interfaces/UserInterfaces';
 import {
   validateFullName,
   validateEmail,
@@ -9,16 +9,10 @@ import {
   validateOrganizationName,
   validateUrl
 } from '../_helpers/validators';
+import { useAppDispatch } from '@/store';
+import { getUser, signUp } from '@/_redux/userSlice';
 
-interface SignUpFormData {
-  full_name: string;
-  email: string;
-  password: string;
-  confirm_password: string;
-  role: UserRole;
-  organization_name: string;
-  organization_link: string;
-}
+
 function useSignUp() {
   const navigate = useNavigate();
   const [isLoading, setIsLoading] = useState(false);
@@ -32,7 +26,7 @@ function useSignUp() {
     organization_link: '',
   });
   const [errors, setErrors] = useState<Partial<SignUpFormData>>({});
-
+const dispatch = useAppDispatch()
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) => {
     const { name, value } = e.target;
     setFormData(prev => ({
@@ -81,24 +75,8 @@ function useSignUp() {
 
     setIsLoading(true);
     try {
-      const response = await fetch('http://localhost:8000/api/auth/signup/', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify(formData),
-      });
-
-      const data = await response.json();
-
-      if (response.ok) {
-        // Redirect to login or dashboard based on role
-        navigate('/login', { 
-          state: { message: 'Account created successfully! Please log in.' }
-        });
-      } else {
-        setErrors(data.errors || { email: 'Sign up failed. Please try again.' });
-      }
+      await dispatch(signUp(formData))
+      await dispatch(getUser())
     } catch {
       setErrors({ email: 'Network error. Please try again.' });
     } finally {

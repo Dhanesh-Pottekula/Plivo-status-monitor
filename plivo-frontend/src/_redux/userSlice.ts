@@ -2,7 +2,7 @@ import { createAsyncThunk, createSlice, type PayloadAction } from "@reduxjs/tool
 
 import { apiUrls } from "../config/apiUrls";
 import axiosNodeInstance from "@/config/axios.config";
-import type { UserInterface } from "@/_constants/Interfaces/UserInterfaces";
+import type { SignUpFormData, UserInterface } from "@/_constants/Interfaces/UserInterfaces";
 
 
 
@@ -32,6 +32,19 @@ export const getUser = createAsyncThunk<UserInterface>(
     }
   }
 );
+
+export const signUp = createAsyncThunk<UserInterface, SignUpFormData>(
+  "auth/signUp",
+  async (data, { rejectWithValue }) => {
+    try {
+      const res = await axiosNodeInstance.post(apiUrls.auth.signUp, data);
+      return res.data;
+    } catch (error: unknown) {
+      return rejectWithValue(error);  
+    }
+  }
+);
+
 export const authSlice = createSlice({
   name: "auth",
   initialState,
@@ -44,7 +57,7 @@ export const authSlice = createSlice({
   },
   extraReducers: (builder) => {
     builder
-      // Create OTP
+      // Get User
       .addCase(getUser.pending, (state) => {
         state.isLoading = true;
         state.error = null;
@@ -54,6 +67,20 @@ export const authSlice = createSlice({
         state.user = action.payload;
       })
       .addCase(getUser.rejected, (state, action) => {
+        state.isLoading = false;
+        state.error = action.payload as string;
+      })
+
+      // Sign Up
+      .addCase(signUp.pending, (state) => {
+        state.isLoading = true;
+        state.error = null;
+      })
+      .addCase(signUp.fulfilled, (state, action: PayloadAction<UserInterface>) => {
+        state.isLoading = false;
+        state.user = action.payload;
+      })
+      .addCase(signUp.rejected, (state, action) => {
         state.isLoading = false;
         state.error = action.payload as string;
       })

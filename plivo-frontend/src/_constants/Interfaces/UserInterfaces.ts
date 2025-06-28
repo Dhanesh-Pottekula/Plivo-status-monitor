@@ -32,26 +32,13 @@ export interface UserInterface {
 }
 
 export interface SignUpFormData {
-  // Organization fields (for admin signup)
-  organization_name?: string;
-  organization_domain?: string;
-  
-  // User fields
-  first_name: string;
-  last_name: string;
+  full_name: string;
   email: string;
   password: string;
   confirm_password: string;
-  phone?: string;
-  address?: string;
-  city?: string;
-  state?: string;
-  zip_code?: string;
   role: UserRole;
-  
-  // For team members joining existing organization
-  organization_id?: string;
-  invite_code?: string;
+  organization_name: string;
+  organization_link: string;
 }
 
 export interface SignUpResponse {

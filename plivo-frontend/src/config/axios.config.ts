@@ -9,7 +9,10 @@ const axiosNodeInstance = axios.create({
 
 axiosNodeInstance.interceptors.request.use(
     function (config) {
-        
+        // Add trailing slash if URL doesn't have one and doesn't contain query parameters
+        if (config.url && !config.url.endsWith('/') && !config.url.includes('?')) {
+            config.url = config.url + '/';
+        }
         
         return config;
     },

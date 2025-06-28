@@ -15,6 +15,7 @@ class Organization(models.Model):
 
 
 class User(AbstractUser):
+    username = None
     USER_ROLES = [
         ('admin', 'Admin'),
         ('team', 'Team Member'),
@@ -22,25 +23,8 @@ class User(AbstractUser):
     ]
     
     # Remove username field and use email as primary identifier
-    username = None
+    full_name = models.CharField(max_length=200, blank=True, null=True)
     email = models.EmailField(unique=True)
-    
-    # User profile fields
-    phone = models.CharField(
-        max_length=15, 
-        validators=[
-            RegexValidator(
-                regex=r'^\+?1?\d{9,15}$',
-                message="Phone number must be entered in the format: '+999999999'. Up to 15 digits allowed."
-            )
-        ],
-        blank=True,
-        null=True
-    )
-    address = models.CharField(max_length=500, blank=True, null=True)
-    city = models.CharField(max_length=100, blank=True, null=True)
-    state = models.CharField(max_length=100, blank=True, null=True)
-    zip_code = models.CharField(max_length=10, blank=True, null=True)
     
     # Multi-tenant fields
     organization = models.ForeignKey(
@@ -58,13 +42,13 @@ class User(AbstractUser):
     updated_at = models.DateTimeField(auto_now=True)
 
     USERNAME_FIELD = 'email'
-    REQUIRED_FIELDS = ['first_name', 'last_name']
+    REQUIRED_FIELDS = ['full_name']
 
     def __str__(self):
         return f"{self.get_full_name()} ({self.email})"
 
     def get_full_name(self):
-        return f"{self.first_name} {self.last_name}".strip()
+        return self.full_name
 
     @property
     def is_admin(self):
