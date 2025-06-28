@@ -4,6 +4,7 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/com
 import { Users, UserPlus } from 'lucide-react';
 import useTeamMembers from '@/hooks/useTeamMembers';
 import { InviteTeamMemberModal } from '@/components/InviteTeamMemberModal';
+import MainLayout from './MainLayout';
 
 function TeamMembers() {
   const {
@@ -21,6 +22,7 @@ function TeamMembers() {
   } = useTeamMembers();
 
   return (
+    <MainLayout>
     <div className="container mx-auto p-6">
       <div className="flex items-center justify-between mb-8">
         <div>
@@ -68,6 +70,7 @@ function TeamMembers() {
         </Card>
       </div>
     </div>
+    </MainLayout>
   );
 }
 

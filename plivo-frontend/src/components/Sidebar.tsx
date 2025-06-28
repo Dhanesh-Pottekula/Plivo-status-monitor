@@ -7,6 +7,9 @@ import { Button } from './ui/button';
 import { Avatar, AvatarFallback, AvatarImage } from './ui/avatar';
 import { Separator } from './ui/separator';
 import { BarChart3Icon, LogOut, UsersIcon } from 'lucide-react';
+import { logoutAction } from '@/_redux/actions/user.actions';
+import { useDispatch } from 'react-redux';
+import type { AppDispatch } from '@/_redux/store';
 
 interface SidebarProps {
   onClose?: () => void;
@@ -15,7 +18,7 @@ interface SidebarProps {
 const Sidebar: React.FC<SidebarProps> = ({ onClose }) => {
   const { user } = useAuth();
   const location = useLocation();
-
+  const dispatch = useDispatch<AppDispatch>();
   const navigationItems = [
     {
       name: 'Dashboard',
@@ -45,6 +48,10 @@ const Sidebar: React.FC<SidebarProps> = ({ onClose }) => {
   const filteredItems = navigationItems.filter(item => 
     !item.adminOnly || (user?.role === UserRole.ADMIN && item.adminOnly)
   );
+
+  const handleLogout = async () => {
+    await dispatch(logoutAction());
+  };
 
   return (
     <div className="h-full bg-white border-r border-gray-200 flex flex-col">
@@ -104,9 +111,7 @@ const Sidebar: React.FC<SidebarProps> = ({ onClose }) => {
           variant="ghost"
           size="sm"
           onClick={() => {
-            // Handle logout logic here
-            console.log('Logout clicked');
-            if (onClose) onClose();
+            handleLogout();
           }}
           className="w-full justify-start text-gray-600 hover:text-red-600 hover:bg-red-50"
         >

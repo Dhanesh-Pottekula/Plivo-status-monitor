@@ -141,3 +141,29 @@ export const getTeamMembersAction = () => async (dispatch: Dispatch<UserActionTy
     throw error;
   }
 };
+// Get Team Members Action
+export const logoutAction = () => async (dispatch: Dispatch<UserActionTypes>) => {
+  dispatch({
+    type: userConstants.LOGOUT.REQUEST,
+    payload: null,
+  });
+  
+  try {
+    const response = await axiosNodeInstance.post(apiUrls.auth.logout);
+    dispatch({
+      type: userConstants.LOGOUT.SUCCESS,
+    });
+    dispatch({
+      type: userConstants.GET_USER.FAILURE
+    });
+    return response.data;
+  } catch (error) {
+    const errorMessage = handleError(error);
+    dispatch({
+      type: userConstants.LOGOUT.FAILURE,
+      payload: errorMessage,
+    });
+    throw error;
+  }
+};
+

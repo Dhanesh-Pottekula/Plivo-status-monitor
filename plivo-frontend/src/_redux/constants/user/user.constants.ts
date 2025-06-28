@@ -19,7 +19,7 @@ export const userConstants = {
   GENERATE_INVITE_LINK: createAsyncActionTypes("GENERATE_INVITE_LINK"),
   GET_TEAM_MEMBERS: createAsyncActionTypes("GET_TEAM_MEMBERS"),
   CLEAR_ERROR: 'CLEAR_ERROR',
-  LOGOUT: 'LOGOUT',
+  LOGOUT: createAsyncActionTypes("LOGOUT"),
 };
 
 export type UserActionTypes =
@@ -32,3 +32,6 @@ export type UserActionTypes =
   | { type: typeof userConstants.LOGIN.REQUEST; payload: LoginFormData }
   | { type: typeof userConstants.LOGIN.SUCCESS; payload: UserInterface }
   | { type: typeof userConstants.LOGIN.FAILURE; payload: Error_response_on_api_failure | null }
+  | { type: typeof userConstants.LOGOUT.REQUEST; payload: null }
+  | { type: typeof userConstants.LOGOUT.SUCCESS; payload: null }
+  | { type: typeof userConstants.LOGOUT.FAILURE; payload: Error_response_on_api_failure | null }
