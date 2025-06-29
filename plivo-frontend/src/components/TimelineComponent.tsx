@@ -7,6 +7,7 @@ import type { TimelineEventInterface } from '@/_constants/Interfaces/TimelineInt
 import type { AppDispatch, RootState } from '@/_redux/store';
 import Loader from './ui/loader';
 import { getTimeLineOfOrganizationAction, getTimeLineOfServiceAction } from '@/_redux/actions/timeline.actions';
+import { useParams } from 'react-router-dom';
 
 interface TimelineComponentProps {
   serviceId?: number;
@@ -122,7 +123,7 @@ const TimelineComponent: React.FC<TimelineComponentProps> = ({
 }) => {
   const dispatch = useDispatch<AppDispatch>();
   const { serviceTimeline, organizationTimeline } = useSelector((state: RootState) => state.timelineReducer);
-  
+  const {org_id} = useParams();
   const timelineData = serviceId ? serviceTimeline : organizationTimeline;
   const loading = timelineData.loading;
   const error = timelineData.error;
@@ -131,10 +132,10 @@ const TimelineComponent: React.FC<TimelineComponentProps> = ({
   useEffect(() => {
     if (serviceId) {
       dispatch(getTimeLineOfServiceAction(serviceId));
-    } else {
-      dispatch(getTimeLineOfOrganizationAction());
+    } else if (org_id) {
+      dispatch(getTimeLineOfOrganizationAction(org_id));
     }
-  }, [dispatch, serviceId]);
+  }, [dispatch, serviceId,org_id]);
 
   if (loading) {
     return (

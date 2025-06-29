@@ -1,12 +1,13 @@
 from django.shortcuts import render
 from django.contrib.contenttypes.models import ContentType
 from rest_framework.decorators import api_view, permission_classes
-from rest_framework.permissions import IsAuthenticated
+from rest_framework.permissions import IsAuthenticated, AllowAny
 from rest_framework.response import Response
 from rest_framework import status
 from .models import Timeline
 from services.models import Service, Incident
 from users.permissions import IsOrganizationAdmin
+from users.views import public_endpoint
 from django.db import models
 
 def log_timeline_event(event_type, user, content_object, title, description="", old_value=None, new_value=None):
@@ -47,13 +48,14 @@ def log_timeline_event(event_type, user, content_object, title, description="", 
         print(f"Error logging timeline event: {str(e)}")
 
 @api_view(['GET'])
-@permission_classes([IsAuthenticated])
-def get_timeline(request):
+@permission_classes([AllowAny])
+@public_endpoint
+def get_timeline(request, org_id):
     """Get timeline events for the user's organization"""
     try:
         # Get timeline events for the user's organization
         timeline_events = Timeline.objects.filter(
-            organization=request.user.organization
+            organization=org_id
         ).select_related('user', 'organization')
         
         # Apply filters if provided
@@ -83,23 +85,19 @@ def get_timeline(request):
         }, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
 
 @api_view(['GET'])
-@permission_classes([IsAuthenticated])
+@permission_classes([AllowAny])
+@public_endpoint
 def get_service_timeline(request, service_id):
     """Get timeline events for a specific service"""
     try:
         # Verify service exists and user has access
         service = Service.objects.get(id=service_id)
-        if service.organization != request.user.organization:
-            return Response({
-                'error': 'Access denied. You can only view timeline for services in your organization.'
-            }, status=status.HTTP_403_FORBIDDEN)
         
         # Get timeline events for this service
         service_content_type = ContentType.objects.get_for_model(Service)
         incident_content_type = ContentType.objects.get_for_model(Incident)
-        
         timeline_events = Timeline.objects.filter(
-            organization=request.user.organization
+            organization=service.organization
         ).filter(
             models.Q(content_type=service_content_type, object_id=service_id) |
             models.Q(content_type=incident_content_type, object_id__in=service.incidents.values_list('id', flat=True))

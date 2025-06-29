@@ -33,14 +33,14 @@ export const getTimeLineOfServiceAction = (serviceId: number) => async (dispatch
     }
   };
 
-  export const getTimeLineOfOrganizationAction = () => async (dispatch: Dispatch<TimelineActionTypes>) => {
+  export const getTimeLineOfOrganizationAction = (org_id: string) => async (dispatch: Dispatch<TimelineActionTypes>) => {
     dispatch({
       type: timelineConstants.GET_TIME_LINE_OF_ORGANIZATION.REQUEST,
       payload: null,
     });
 
     try {
-      const response = await axiosNodeInstance.get<TimelineResponseInterface>(apiUrls.timeline.getTimeLineOfOrganization());
+      const response = await axiosNodeInstance.get<TimelineResponseInterface>(apiUrls.timeline.getTimeLineOfOrganization(org_id));
       dispatch({
         type: timelineConstants.GET_TIME_LINE_OF_ORGANIZATION.SUCCESS,
         payload: response.data.timeline,

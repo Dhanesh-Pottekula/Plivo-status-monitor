@@ -16,7 +16,7 @@ export const apiUrls = {
         createService: '/api/services/create/',
         updateService: '/api/services/:id/update/',
         deleteService: '/api/services/:id/delete/',
-        getSeriviceDetails: '/api/services/:id/',
+        getSeriviceDetails: '/api/service/:id/',
     },
     incidents: {
         list: (serviceId: number) => `/api/services/${serviceId}/incidents/`,
@@ -27,7 +27,7 @@ export const apiUrls = {
     },
     timeline: {
         getTimeLineOfService: (serviceId: number) => `/api/timeline/service/${serviceId}/`,
-        getTimeLineOfOrganization: () => `/api/timeline/`,
+        getTimeLineOfOrganization: (org_id: string) => `/api/timeline/${org_id}/`,
     },
     organizations: {
         getOrganizationDetails: (organizationId: string) => `/api/organizations/${organizationId}/`,

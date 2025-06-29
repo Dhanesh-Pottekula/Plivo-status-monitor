@@ -4,7 +4,7 @@ from rest_framework_simplejwt.tokens import AccessToken
 from rest_framework_simplejwt.exceptions import InvalidToken, TokenError
 from django.conf import settings
 from django.http import JsonResponse
-from . import urls
+from django.urls import resolve
 import logging
 import re
 
@@ -23,6 +23,18 @@ class JWTAuthenticationMiddleware(MiddlewareMixin):
         print(request.path)
         if self._should_skip_auth(request.path):
             return None
+        
+        # Check if this is a public endpoint by resolving the URL
+        try:
+            resolved = resolve(request.path)
+            view_func = resolved.func
+            
+            # Check if the view is marked as public
+            if hasattr(view_func, 'is_public') and view_func.is_public:
+                return None
+        except:
+            # If we can't resolve the URL, continue with authentication
+            pass
             
         # Get token from cookie
         token = request.COOKIES.get(settings.SIMPLE_JWT['AUTH_COOKIE'])
@@ -86,7 +98,7 @@ class JWTAuthenticationMiddleware(MiddlewareMixin):
         # Add admin path to skip list (without trailing slashes for comparison)
         skip_paths = ['/admin', '/api/auth/signup', '/api/auth/login', '/api/health', '/api/invite/verify']
         
-        return any(path.startswith(skip_path) for skip_path in skip_paths) 
+        return any(path.startswith(skip_path) for skip_path in skip_paths)
 
 class CSRFExemptionMiddleware(MiddlewareMixin):
     def process_request(self, request):

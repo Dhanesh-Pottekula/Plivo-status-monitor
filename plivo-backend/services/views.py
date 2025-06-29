@@ -24,6 +24,7 @@ from .serializers import (
     IncidentUpdateSerializer
 )
 from timeline.views import log_timeline_event
+from users.views import public_endpoint
 
 # Create your views here.
 
@@ -56,10 +57,13 @@ def create_service(request):
 
 @api_view(['GET'])
 @permission_classes([AllowAny])
+@public_endpoint
 def get_service(request, service_id):
     """Get a specific service by ID"""
     try:
+        print(service_id)
         service = Service.objects.get(id=service_id)
+        print(service)
         serializer = ServiceSerializer(service)
         return Response(serializer.data)
         
@@ -76,12 +80,13 @@ def get_service(request, service_id):
 
 @api_view(['GET'])
 @permission_classes([AllowAny])
+@public_endpoint
 def list_services(request, org_id):
     """List all services for the user's organization"""
     try:
         # Get organization filter from query params
         org_id_str = org_id
-        user = request.user
+        
         if not org_id_str:
             return Response({
                 'error': 'Organization ID is required'
@@ -94,13 +99,18 @@ def list_services(request, org_id):
                     'error': 'Organization not found'
                 }, status=status.HTTP_404_NOT_FOUND)    
         
-        # Get services for the organization
-        if (user.role == 'admin' or (user.role == 'team' and organization.id)):
-            services = Service.objects.filter(organization=organization)
+        # Check if user is authenticated
+        if request.user.is_authenticated:
+            # Authenticated users can see all services for their organization
+            if (request.user.role == 'admin' or (request.user.role == 'team' and organization.id)):
+                services = Service.objects.filter(organization=organization)
+                serializer = ServiceListSerializer(services, many=True)
+                return Response(serializer.data)
         else:
+            # Unauthenticated users can only see publicly visible services
             services = Service.objects.filter(organization=organization, publicly_visible=True)
-        serializer = ServiceListSerializer(services, many=True)
-        return Response(serializer.data)
+            serializer = ServiceListSerializer(services, many=True)
+            return Response(serializer.data)
         
     except Exception as e:
         return Response({
@@ -183,17 +193,13 @@ def delete_service(request, service_id):
 
 # Incident Views
 @api_view(['GET'])
-@permission_classes([IsAuthenticated])
+@permission_classes([AllowAny])
+@public_endpoint
 def list_incidents(request, service_id):
     """List all incidents for a specific service"""
     try:
         # Verify service exists and user has access
         service = Service.objects.get(id=service_id)
-        if service.organization != request.user.organization:
-            return Response({
-                'error': 'Access denied. You can only view incidents for services in your organization.'
-            }, status=status.HTTP_403_FORBIDDEN)
-        
         incidents = Incident.objects.filter(service=service)
         serializer = IncidentListSerializer(incidents, many=True)
         return Response(serializer.data)

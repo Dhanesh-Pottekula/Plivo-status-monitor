@@ -4,10 +4,12 @@ import { Input } from '@/components/ui/input'
 import { Button } from '@/components/ui/button'
 import { Label } from '@/components/ui/label'
 import useLogin from '@/hooks/useLogin'
+import MainLayout from './MainLayout'
 
 function LoginPage() {
   const { formData, errors, isLoading, handleInputChange, handleSubmit } = useLogin()
   return (
+    <MainLayout>
     <div className="min-h-screen flex items-center justify-center bg-gray-50 py-12 px-4 sm:px-6 lg:px-8">
       <div className="max-w-md w-full space-y-8">
         <Card className="w-full">
@@ -74,6 +76,7 @@ function LoginPage() {
         </Card>
       </div>
     </div>
+    </MainLayout>
   )
 }
 
