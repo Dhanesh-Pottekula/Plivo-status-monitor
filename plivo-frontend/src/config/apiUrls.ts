@@ -17,5 +17,12 @@ export const apiUrls = {
         updateService: '/api/services/:id/update/',
         deleteService: '/api/services/:id/delete/',
         getSeriviceDetails: '/api/services/:id/',
+    },
+    incidents: {
+        list: (serviceId: number) => `/api/services/${serviceId}/incidents/`,
+        create: (serviceId: number) => `/api/services/${serviceId}/incidents/create/`,
+        get: (serviceId: number, incidentId: number) => `/api/services/${serviceId}/incidents/${incidentId}/`,
+        update: (serviceId: number, incidentId: number) => `/api/services/${serviceId}/incidents/${incidentId}/update/`,
+        delete: (serviceId: number, incidentId: number) => `/api/services/${serviceId}/incidents/${incidentId}/delete/`,
     }
 }

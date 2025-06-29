@@ -1,5 +1,4 @@
-
-import type { ServiceInterface } from "@/_constants/Interfaces/ServicesInterface";
+import type { ServiceInterface, IncidentInterface } from "@/_constants/Interfaces/ServicesInterface";
 
 const createAsyncActionTypes = (base: string) => ({
   REQUEST: `${base}_REQUEST`,
@@ -13,6 +12,10 @@ export const serviceConstants = {
     UPDATE_SERVICE: createAsyncActionTypes("UPDATE_SERVICE"),
     DELETE_SERVICE: createAsyncActionTypes("DELETE_SERVICE"),
     GET_SERVICE_DETAILS: createAsyncActionTypes("GET_SERVICE_DETAILS"),
+    GET_INCIDENTS: createAsyncActionTypes("GET_INCIDENTS"),
+    CREATE_INCIDENT: createAsyncActionTypes("CREATE_INCIDENT"),
+    UPDATE_INCIDENT: createAsyncActionTypes("UPDATE_INCIDENT"),
+    DELETE_INCIDENT: createAsyncActionTypes("DELETE_INCIDENT"),
 };
 
 export type ServiceActionTypes =
@@ -31,3 +34,15 @@ export type ServiceActionTypes =
   | { type: typeof serviceConstants.GET_SERVICE_DETAILS.REQUEST; payload: null }
   | { type: typeof serviceConstants.GET_SERVICE_DETAILS.SUCCESS; payload: ServiceInterface }
   | { type: typeof serviceConstants.GET_SERVICE_DETAILS.FAILURE; payload: { message: string } | null }
+  | { type: typeof serviceConstants.GET_INCIDENTS.REQUEST; payload: null }
+  | { type: typeof serviceConstants.GET_INCIDENTS.SUCCESS; payload: IncidentInterface[] }
+  | { type: typeof serviceConstants.GET_INCIDENTS.FAILURE; payload: { message: string } | null }
+  | { type: typeof serviceConstants.CREATE_INCIDENT.REQUEST; payload: Partial<IncidentInterface> }
+  | { type: typeof serviceConstants.CREATE_INCIDENT.SUCCESS; payload: IncidentInterface }
+  | { type: typeof serviceConstants.CREATE_INCIDENT.FAILURE; payload: { message: string } | null }
+  | { type: typeof serviceConstants.UPDATE_INCIDENT.REQUEST; payload: Partial<IncidentInterface> }
+  | { type: typeof serviceConstants.UPDATE_INCIDENT.SUCCESS; payload: IncidentInterface }
+  | { type: typeof serviceConstants.UPDATE_INCIDENT.FAILURE; payload: { message: string } | null }
+  | { type: typeof serviceConstants.DELETE_INCIDENT.REQUEST; payload: { serviceId: number; incidentId: number } }
+  | { type: typeof serviceConstants.DELETE_INCIDENT.SUCCESS; payload: { serviceId: number; incidentId: number } }
+  | { type: typeof serviceConstants.DELETE_INCIDENT.FAILURE; payload: { message: string } | null }

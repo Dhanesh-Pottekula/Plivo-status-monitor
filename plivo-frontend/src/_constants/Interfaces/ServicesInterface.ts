@@ -23,3 +23,43 @@ export interface ServiceInterface {
   updatedAt: string;
 }
 
+export interface IncidentInterface {
+  id: number;
+  serviceId: number;
+  serviceName?: string;
+  title: string;
+  description: string;
+  status: IncidentStatusType;
+  severity: IncidentSeverityType;
+  createdBy: string;
+  resolvedAt?: string;
+  createdAt: string;
+  updatedAt: string;
+}
+
+export type IncidentStatusType = 
+  | "investigating"
+  | "identified"
+  | "monitoring"
+  | "resolved";
+
+export type IncidentSeverityType = 
+  | "low"
+  | "medium"
+  | "high"
+  | "critical";
+
+export const INCIDENT_STATUS_OPTIONS = [
+  { value: "investigating", label: "Investigating" },
+  { value: "identified", label: "Identified" },
+  { value: "monitoring", label: "Monitoring" },
+  { value: "resolved", label: "Resolved" },
+];
+
+export const INCIDENT_SEVERITY_OPTIONS = [
+  { value: "low", label: "Low" },
+  { value: "medium", label: "Medium" },
+  { value: "high", label: "High" },
+  { value: "critical", label: "Critical" },
+];
+

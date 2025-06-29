@@ -1,4 +1,4 @@
-import type { ServiceStatusType } from "@/_constants/Interfaces/ServicesInterface";
+import type { IncidentStatusType, ServiceStatusType } from "@/_constants/Interfaces/ServicesInterface";
 
 export const handleError = (error: unknown) => {
     if (error && typeof error === 'object' && 'response' in error) {
@@ -11,7 +11,7 @@ export const handleError = (error: unknown) => {
   };
   
 
-  export const getStatusBadgeVariant = (status: ServiceStatusType) => {
+  export const getStatusBadgeVariant = (status: ServiceStatusType | IncidentStatusType) => {
     switch (status) {
       case "operational":
         return "default";
@@ -21,6 +21,14 @@ export const handleError = (error: unknown) => {
         return "destructive";
       case "major_outage":
         return "destructive";
+      case "investigating":
+        return "default";
+      case "identified":
+        return "secondary";
+      case "monitoring":
+        return "destructive";
+      case "resolved":
+        return "default";
       default:
         return "default";
     }

@@ -16,7 +16,7 @@ import { SERVICE_STATUS_OPTIONS } from "@/_constants/Interfaces/ServicesInterfac
 import { type ServiceStatusType } from "@/_constants/Interfaces/ServicesInterface";
 import { type AppDispatch, type RootState } from "@/_redux/store";
 import MainLayout from "./MainLayout";
-import { EditServiceModal, DeleteServiceModal } from "@/components/ServicesPage";
+import { EditServiceModal, DeleteServiceModal, IncidentsList } from "@/components/ServicesPage";
 import { type ServiceFormData } from "@/components/ServicesPage/types";
 import { formatDate, getStatusBadgeVariant } from "@/_helpers/commonFunctions";
 
@@ -54,8 +54,6 @@ function ServiceDetailsPage() {
       });
     }
   }, [service]);
-
-
 
   const handleEdit = () => {
     setIsEditModalOpen(true);
@@ -201,6 +199,11 @@ function ServiceDetailsPage() {
                   </div>
                 </CardContent>
               </Card>
+            </div>
+
+            {/* Incidents Section */}
+            <div className="mt-8">
+              <IncidentsList serviceId={service.id} />
             </div>
           </div>
 

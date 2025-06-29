@@ -1,4 +1,4 @@
-import { type ServiceStatusType, type ServiceInterface } from "@/_constants/Interfaces/ServicesInterface";
+import { type ServiceStatusType, type ServiceInterface, type IncidentStatusType, type IncidentSeverityType, type IncidentInterface } from "@/_constants/Interfaces/ServicesInterface";
 
 export interface ServiceFormData {
   name: string;
@@ -7,4 +7,11 @@ export interface ServiceFormData {
   publiclyVisible: boolean;
 }
 
-export type { ServiceInterface, ServiceStatusType }; 
+export interface IncidentFormData {
+  title: string;
+  description: string;
+  status: IncidentStatusType;
+  severity: IncidentSeverityType;
+}
+
+export type { ServiceInterface, ServiceStatusType, IncidentInterface, IncidentStatusType, IncidentSeverityType }; 

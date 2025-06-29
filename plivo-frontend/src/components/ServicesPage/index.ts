@@ -5,4 +5,8 @@ export { default as ServiceCard } from "./ServiceCard";
 export { default as EmptyState } from "./EmptyState";
 export { default as AlertMessage } from "./AlertMessage";
 export { default as ServicesGrid } from "./ServicesGrid";
+export { default as CreateIncidentModal } from "./CreateIncidentModal";
+export { default as EditIncidentModal } from "./EditIncidentModal";
+export { default as DeleteIncidentModal } from "./DeleteIncidentModal";
+export { default as IncidentsList } from "./IncidentsList";
 export * from "./types"; 
