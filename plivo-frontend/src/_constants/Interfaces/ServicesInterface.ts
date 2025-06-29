@@ -15,6 +15,11 @@ export const SERVICE_STATUS_OPTIONS: ServiceStatus[] = [
 export interface ServiceInterface {
   id: number;
   organizationId: string;
+  organization?: {
+    id: string;
+    name: string;
+    domain?: string;
+  };
   name: string;
   description: string;
   currentStatus: ServiceStatusType;

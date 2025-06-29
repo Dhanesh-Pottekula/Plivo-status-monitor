@@ -35,12 +35,28 @@ export const handleError = (error: unknown) => {
   };
 
   export const formatDate = (dateString: string) => {
-    return new Date(dateString).toLocaleDateString("en-US", {
-      year: "numeric",
-      month: "long",
-      day: "numeric",
-      hour: "2-digit",
-      minute: "2-digit",
-      second: "2-digit",
-    });
+    try {
+      // Normalize format: Replace "+00:00Z" or any offset ending with 'Z' to 'Z' (if any)
+      const normalizedDateString = dateString.replace(/\+00:00Z$/, 'Z');
+  
+      const date = new Date(normalizedDateString);
+  
+      if (isNaN(date.getTime())) {
+        throw new Error("Invalid date");
+      }
+  
+      return date.toLocaleString("en-US", {
+        year: "numeric",
+        month: "long",
+        day: "numeric",
+        hour: "2-digit",
+        minute: "2-digit",
+        second: "2-digit",
+        hour12: true,
+        timeZoneName: "short", // optional: adds "UTC" or local timezone
+      });
+    } catch (error) {
+      return "Invalid Date";
+    }
   };
+  

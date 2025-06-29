@@ -4,7 +4,6 @@ import { Plus, Edit, Trash2, AlertTriangle, Clock, CheckCircle } from "lucide-re
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
-import { Separator } from "@/components/ui/separator";
 import { 
   CreateIncidentModal, 
   EditIncidentModal, 
@@ -160,36 +159,36 @@ function IncidentsList({ serviceId }: IncidentsListProps) {
   }
 
   return (
-    <div className="space-y-4">
+    <div className="space-y-3">
       {/* Header */}
       <div className="flex justify-between items-center">
-        <h2 className="text-2xl font-bold">Incidents</h2>
-        <Button onClick={() => setIsCreateModalOpen(true)}>
-          <Plus className="h-4 w-4 mr-2" />
+        <h2 className="text-xl font-semibold text-gray-900">Incidents</h2>
+        <Button onClick={() => setIsCreateModalOpen(true)} size="sm">
+          <Plus className="h-3 w-3 mr-1" />
           Create Incident
         </Button>
       </div>
 
       {/* Incidents List */}
       {incidents && incidents.length > 0 ? (
-        <div className="space-y-4">
+        <div className="space-y-2">
           {incidents.map((incident) => (
-            <Card key={incident.id}>
-              <CardHeader>
-                <CardTitle className="flex items-center justify-between">
+            <Card key={incident.id} className="border border-gray-200 shadow-sm">
+              <CardHeader className="pb-3">
+                <CardTitle className="flex items-center justify-between text-base">
                   <div className="flex items-center space-x-2">
                     {getStatusIcon(incident.status)}
-                    <span>{incident.title}</span>
+                    <span className="font-medium">{incident.title}</span>
                   </div>
-                  <div className="flex items-center space-x-2">
-                    <Badge variant={getStatusBadgeVariant(incident.status)}>
+                  <div className="flex items-center space-x-1">
+                    <Badge variant={getStatusBadgeVariant(incident.status)} className="text-xs">
                       {
                         INCIDENT_STATUS_OPTIONS.find(
                           (opt) => opt.value === incident.status
                         )?.label
                       }
                     </Badge>
-                    <Badge variant={getSeverityBadgeVariant(incident.severity)}>
+                    <Badge variant={getSeverityBadgeVariant(incident.severity)} className="text-xs">
                       {
                         INCIDENT_SEVERITY_OPTIONS.find(
                           (opt) => opt.value === incident.severity
@@ -198,52 +197,48 @@ function IncidentsList({ serviceId }: IncidentsListProps) {
                     </Badge>
                     <Button
                       onClick={() => openEditModal(incident)}
-                      variant="outline"
+                      variant="ghost"
                       size="sm"
+                      className="h-7 w-7 p-0"
                     >
-                      <Edit className="h-4 w-4" />
+                      <Edit className="h-3 w-3" />
                     </Button>
                     <Button
                       onClick={() => openDeleteModal(incident)}
-                      variant="outline"
+                      variant="ghost"
                       size="sm"
-                      className="text-red-600 hover:text-red-700"
+                      className="h-7 w-7 p-0 text-red-500 hover:text-red-700"
                     >
-                      <Trash2 className="h-4 w-4" />
+                      <Trash2 className="h-3 w-3" />
                     </Button>
                   </div>
                 </CardTitle>
               </CardHeader>
-              <CardContent>
-                <p className="text-gray-700 mb-3">{incident.description}</p>
-                <Separator className="my-3" />
-                <div className="grid grid-cols-2 gap-4 text-sm text-gray-600">
-                  <div>
-                    <span className="font-semibold">Created by:</span> {incident.createdBy}
+              <CardContent className="pt-0">
+                <p className="text-sm text-gray-600 mb-2 line-clamp-2">{incident.description}</p>
+                <div className="flex items-center justify-between text-xs text-gray-500">
+                  <div className="flex items-center space-x-4">
+                    <span>By {incident.createdBy}</span>
+                    <span>Created {formatDate(incident.createdAt)}</span>
+                    {incident.resolvedAt && (
+                      <span>Resolved {formatDate(incident.resolvedAt)}</span>
+                    )}
                   </div>
-                  <div>
-                    <span className="font-semibold">Created:</span> {formatDate(incident.createdAt)}
-                  </div>
-                  {incident.resolvedAt && (
-                    <div>
-                      <span className="font-semibold">Resolved:</span> {formatDate(incident.resolvedAt)}
-                    </div>
-                  )}
                 </div>
               </CardContent>
             </Card>
           ))}
         </div>
       ) : (
-        <Card>
-          <CardContent className="flex flex-col items-center justify-center py-8">
-            <AlertTriangle className="h-12 w-12 text-gray-400 mb-4" />
-            <h3 className="text-lg font-semibold text-gray-600 mb-2">No incidents yet</h3>
-            <p className="text-gray-500 text-center mb-4">
+        <Card className="border border-gray-200 shadow-sm">
+          <CardContent className="flex flex-col items-center justify-center py-6">
+            <AlertTriangle className="h-8 w-8 text-gray-400 mb-2" />
+            <h3 className="text-sm font-medium text-gray-600 mb-1">No incidents yet</h3>
+            <p className="text-xs text-gray-500 text-center mb-3">
               There are no incidents reported for this service.
             </p>
-            <Button onClick={() => setIsCreateModalOpen(true)}>
-              <Plus className="h-4 w-4 mr-2" />
+            <Button onClick={() => setIsCreateModalOpen(true)} size="sm">
+              <Plus className="h-3 w-3 mr-1" />
               Create First Incident
             </Button>
           </CardContent>
