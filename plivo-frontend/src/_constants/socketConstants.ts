@@ -1,0 +1,2 @@
+export const SOCKET_ROOM_ORG_UPDATE = (org_id: string) => `org_${org_id}_update`;
+export const SOCKET_ROOM_SERVICE_UPDATE = (org_id: string, service_id: string) => `org_${org_id}_service_${service_id}_update`;
