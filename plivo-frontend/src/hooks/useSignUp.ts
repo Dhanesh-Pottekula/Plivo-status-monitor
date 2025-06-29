@@ -24,7 +24,7 @@ function useSignUp() {
     username: '',
     password: '',
     confirm_password: '',
-    role: UserRole.USER,
+    role: UserRole.ADMIN,
     organization_name: '',
     organization_link: '',
     token: '',
@@ -104,6 +104,7 @@ const dispatch = useDispatch<AppDispatch>()
 
     setIsLoading(true);
     try {
+      console.log("formData",formData);
       await dispatch(signUpAction(formData))
       await dispatch(getUserAction())
     } catch {

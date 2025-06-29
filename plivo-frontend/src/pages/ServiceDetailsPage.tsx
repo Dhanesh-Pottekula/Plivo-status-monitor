@@ -21,6 +21,7 @@ import { type ServiceFormData } from "@/components/ServicesPage/types";
 import { getStatusBadgeVariant } from "@/_helpers/commonFunctions";
 import TimelineComponent from "@/components/TimelineComponent";
 import { useAuth } from "@/_contexts/AuthContext";
+import { getTimeLineOfServiceAction } from "@/_redux/actions/timeline.actions";
 
 function ServiceDetailsPage() {
   const { service_id } = useParams<{ service_id: string }>();
@@ -73,7 +74,8 @@ function ServiceDetailsPage() {
       setIsEditModalOpen(false);
       // Refresh service details
       if (service_id) {
-        dispatch(getServiceDetialAction(parseInt(service_id)));
+        await dispatch(getServiceDetialAction(parseInt(service_id)));
+        await dispatch(getTimeLineOfServiceAction(parseInt(service_id)));
       }
     } catch (error) {
       console.error('Failed to update service:', error);
@@ -123,7 +125,7 @@ function ServiceDetailsPage() {
                   Back
                 </Button>
                 <div className="flex-1">
-                  <h1 className="text-2xl font-semibold text-gray-900">{service.name}</h1>
+                  <h1 className="text-2xl font-semibold text-gray-900">{service.name} Service</h1>
                 </div>
               </div>
              {is_have_edit_access && <div className="flex items-center space-x-2">

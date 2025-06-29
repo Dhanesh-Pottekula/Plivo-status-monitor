@@ -3,6 +3,7 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import type { OrganizationInterface } from "@/_constants/Interfaces/OrganizationInterfaces";
 import MainLayout from "./MainLayout";
+import { Building2 } from "lucide-react";
 
 function OrganizationsList() {
   const { organizations, handleOrgClick, formatDate } = useOrganizations();
@@ -14,7 +15,7 @@ function OrganizationsList() {
           <div>
             <div className="mb-6">
               <h1 className="text-3xl font-bold text-gray-900 mb-2">
-                Organizations
+                Public Organizations
               </h1>
            
             </div>
@@ -28,8 +29,8 @@ function OrganizationsList() {
                 >
                   <CardHeader className="pb-3">
                     <div className="flex items-start justify-between">
-                      <CardTitle className="text-lg font-semibold text-gray-900 line-clamp-2">
-                        {org.name}
+                      <CardTitle className="text-lg font-semibold text-gray-900 line-clamp-2 flex items-center">
+                      <Building2 className="h-4 w-4 mr-2" /> {org.name}
                       </CardTitle>
                       <Badge
                         variant={org.is_active ? "default" : "secondary"}
@@ -78,10 +79,6 @@ function OrganizationsList() {
                       <div className="flex items-center justify-between text-xs text-gray-500">
                         <span>Created:</span>
                         <span>{formatDate(org.created_at)}</span>
-                      </div>
-                      <div className="flex items-center justify-between text-xs text-gray-500 mt-1">
-                        <span>Updated:</span>
-                        <span>{formatDate(org.updated_at)}</span>
                       </div>
                     </div>
                   </CardContent>

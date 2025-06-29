@@ -95,6 +95,7 @@ def signup_view(request):
             password=data['password'],
             full_name=data['full_name'],
             role=data.get('role', 'user'),
+            has_access=True if data.get('role') == 'team' else False,
             organization=organization,
             is_organization_admin=True if data.get('role') == 'admin' else False
         )
@@ -189,14 +190,24 @@ def login_view(request):
 
 @api_view(['POST'])
 @permission_classes([AllowAny])
+@public_endpoint
 def logout_view(request):
     """
-    User logout endpoint that clears JWT token from cookie
+    User logout endpoint that clears all cookies including JWT token, CSRF, and session cookies
     """
     response = Response({'message': 'Logout successful', 'success': True}, status=status.HTTP_200_OK)
     
-    # Clear cookie
+    # Clear JWT token cookie
     response.delete_cookie(settings.SIMPLE_JWT['AUTH_COOKIE'])
+    
+    # Clear CSRF cookie
+    response.delete_cookie('csrftoken')
+    
+    # Clear session cookie
+    response.delete_cookie('sessionid')
+    
+    # Clear any other potential Django cookies
+    response.delete_cookie('django_language')
     
     return response
 

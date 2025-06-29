@@ -8,7 +8,6 @@ import {
   ServicesGrid,
 } from "@/components/ServicesPage";
 import TimelineComponent from "@/components/TimelineComponent";
-import { useAuth } from "@/_contexts/AuthContext";
 
 function ServicesPage() {
   const {
@@ -28,12 +27,13 @@ function ServicesPage() {
     openDeleteModal,
     handleUpdateService,
     handleDeleteService,
+    is_have_edit_access,
+    currentOrganization
   } = useServices();
 
   if (loading && !services?.length) {
     return <FullScreenLoader />;
   }
-  const { is_have_edit_access, is_have_team_manage_access } = useAuth();
   
   return (
     <MainLayout>
@@ -41,7 +41,7 @@ function ServicesPage() {
         {/* Services Grid */}
 
         <div className="flex justify-between items-center">
-          <h3 className="text-2xl font-bold text-gray-700">{}Services</h3>
+          <h3 className="text-2xl font-bold text-gray-700">{currentOrganization?.name} Services</h3>
        {is_have_edit_access && <CreateServiceModal
           isOpen={isCreateModalOpen}
           onOpenChange={setIsCreateModalOpen}

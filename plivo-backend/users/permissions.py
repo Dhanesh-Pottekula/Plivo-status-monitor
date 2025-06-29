@@ -5,6 +5,13 @@ class IsOrganizationAdmin(BasePermission):
         if(not request.user):
             return False
         return request.user.is_organization_admin
+
+class IsOrganizationAdminOrTeamWithAccess(BasePermission):
+    """Allows organization admins or team members with access"""
+    def has_permission(self, request, view):
+        if(not request.user):
+            return False
+        return request.user.is_organization_admin or (request.user.role == 'team' and request.user.has_access)
     
 class IsAdmin(BasePermission):
     def has_permission(self, request, view):

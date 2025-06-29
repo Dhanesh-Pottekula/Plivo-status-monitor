@@ -10,7 +10,7 @@ from .models import Service, Incident
 from users.models import Organization
 from rest_framework.decorators import api_view, permission_classes
 from rest_framework.permissions import AllowAny, IsAuthenticated
-from users.permissions import IsOrganizationAdmin
+from users.permissions import IsOrganizationAdmin, IsOrganizationAdminOrTeamWithAccess
 from rest_framework.response import Response
 from rest_framework import status
 from .serializers import (
@@ -29,7 +29,7 @@ from users.views import public_endpoint
 # Create your views here.
 
 @api_view(['POST'])
-@permission_classes([IsOrganizationAdmin])
+@permission_classes([IsOrganizationAdminOrTeamWithAccess])
 def create_service(request):
     """Create a new service"""
     try:
@@ -119,7 +119,7 @@ def list_services(request, org_id):
 
 
 @api_view(['PUT'])
-@permission_classes([IsOrganizationAdmin])
+@permission_classes([IsOrganizationAdminOrTeamWithAccess])
 def update_service(request, service_id):
     """Update a service"""
     try:
@@ -165,7 +165,7 @@ def update_service(request, service_id):
 
 
 @api_view(['DELETE'])
-@permission_classes([IsOrganizationAdmin])
+@permission_classes([IsOrganizationAdminOrTeamWithAccess])
 def delete_service(request, service_id):
     """Delete a service"""
     try:
@@ -216,7 +216,7 @@ def list_incidents(request, service_id):
 
 
 @api_view(['POST'])
-@permission_classes([IsAuthenticated])
+@permission_classes([IsOrganizationAdminOrTeamWithAccess])
 def create_incident(request, service_id):
     """Create a new incident for a specific service"""
     try:

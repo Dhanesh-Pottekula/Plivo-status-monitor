@@ -34,7 +34,7 @@ const Sidebar: React.FC<SidebarProps> = ({ onClose }) => {
       teamOnly: false,
     },
     {
-      name: "Services",
+      name: " My Services",
       href: appRoutes.services.replace(":org_id", user?.organization?.id || ""),
       icon: <ServerIcon className="h-4 w-4" />,
       adminOnly: true,
@@ -44,6 +44,7 @@ const Sidebar: React.FC<SidebarProps> = ({ onClose }) => {
       name: "Organizations",
       href: appRoutes.organizations_list,
       icon: <Building2Icon className="h-4 w-4" />,
+      userOnly: true,
     },
   ];
 
@@ -59,13 +60,15 @@ const Sidebar: React.FC<SidebarProps> = ({ onClose }) => {
   };
 
   const filteredItems = navigationItems.filter((item) => {
-    return (!item.adminOnly && !item.teamOnly )||
+    return (!item.adminOnly && !item.teamOnly && !item.userOnly )||
       (user?.role === UserRole.ADMIN && item.adminOnly) ||
-      (user?.role === UserRole.TEAM && item.teamOnly);
+      (user?.role === UserRole.TEAM && item.teamOnly) ||
+      (user?.role === UserRole.USER && item.userOnly);
   });
 
   const handleLogout = async () => {
-    await dispatch(logoutAction());
+     dispatch(logoutAction());
+    window.location.href = appRoutes.login;
   };
 
   return (

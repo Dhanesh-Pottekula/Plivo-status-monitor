@@ -9,13 +9,13 @@ const BaseUrlComponent = () => {
     return <Navigate replace to={appRoutes.login} />;
   }
   if (user?.role === "admin") {
-    return <Navigate replace to={appRoutes.services} />;
+    return <Navigate replace to={appRoutes.team_members} />;
   }else if (user?.role === "team") {
-    return <Navigate replace to={appRoutes.services} />;
+    return <Navigate replace to={appRoutes.organizations_list} />;
   }else{
     return <Navigate replace to={appRoutes.organizations_list} />;
   }
-  // return <Outlet />;
+
 };
 
 export default BaseUrlComponent;

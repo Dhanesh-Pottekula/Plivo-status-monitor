@@ -1,6 +1,6 @@
 import { useDispatch, useSelector } from 'react-redux';
 import type { AppDispatch, RootState } from '@/_redux/store';
-import { getOrganizationDetailsAction, getOrganizationsAction } from '@/_redux/actions';
+import {  getOrganizationsAction } from '@/_redux/actions';
 import { useEffect } from 'react';
 import { appRoutes } from '@/config/appRoutes';
 import { useNavigate } from 'react-router-dom';
