@@ -37,6 +37,7 @@ def get_user_data(user):
             'is_active': user.organization.is_active
         } if user.organization else None,
         'role': user.role,
+        'has_access': user.has_access,
         'is_organization_admin': user.is_organization_admin,
         'is_active': user.is_active,
         'created_at': user.created_at.isoformat(),

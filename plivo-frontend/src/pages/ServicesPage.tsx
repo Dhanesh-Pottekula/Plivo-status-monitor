@@ -8,6 +8,7 @@ import {
   ServicesGrid,
 } from "@/components/ServicesPage";
 import TimelineComponent from "@/components/TimelineComponent";
+import { useAuth } from "@/_contexts/AuthContext";
 
 function ServicesPage() {
   const {
@@ -32,7 +33,8 @@ function ServicesPage() {
   if (loading && !services?.length) {
     return <FullScreenLoader />;
   }
-
+  const { is_have_edit_access, is_have_team_manage_access } = useAuth();
+  
   return (
     <MainLayout>
       <div className="container mx-auto p-6 bg-white space-y-6">
@@ -40,13 +42,13 @@ function ServicesPage() {
 
         <div className="flex justify-between items-center">
           <h3 className="text-2xl font-bold text-gray-700">{}Services</h3>
-        <CreateServiceModal
+       {is_have_edit_access && <CreateServiceModal
           isOpen={isCreateModalOpen}
           onOpenChange={setIsCreateModalOpen}
           formData={formData}
           setFormData={setFormData}
           onSubmit={handleCreateService}
-        />
+        />}
       </div>
         <ServicesGrid
           services={services || []}

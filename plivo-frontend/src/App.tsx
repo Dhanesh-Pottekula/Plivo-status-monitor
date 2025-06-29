@@ -10,7 +10,6 @@ import LoginPage from "./pages/LoginPage";
 import "./App.css";
 import { appRoutes } from "./config/appRoutes";
 import { Provider } from "react-redux";
-import AdminDashboard from "./pages/AdminDashboard";
 import TeamMembers from "./pages/TeamMembers";
 import { store } from "./_redux/store";
 import ServicesPage from "./pages/ServicesPage";
@@ -34,7 +33,6 @@ const AppRoutes: React.FC = () => {
       <Route path="/" element={<PrivateRoute />}>
         {/* Admin routes */}
         <Route path="/" element={<AdminRoute />}>
-          <Route path={appRoutes.admin_dashboard} element={<AdminDashboard />} /> 
           <Route path={appRoutes.team_members} element={<TeamMembers />} />
         </Route>
 

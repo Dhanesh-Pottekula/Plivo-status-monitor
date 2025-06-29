@@ -5,12 +5,14 @@ import { Label } from '../components/ui/label';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '../components/ui/card';
 import { Loader } from 'lucide-react';
 import useSignUp from '@/hooks/useSignUp';
+import MainLayout from './MainLayout';
 
 const SignUp: React.FC = () => {
   const { isLoading, formData, errors, handleInputChange, handleSubmit, handleLoginClick ,token} = useSignUp();
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-blue-50 to-indigo-100 flex items-center justify-center p-4 sm:p-6 lg:p-8">
+    <MainLayout>
+    <div className="min-h-screen bg-white flex items-center justify-center p-4 sm:p-6 lg:p-8">
       <div className="w-full max-w-2xl">
         <Card className="shadow-xl">
           <CardHeader className="text-center space-y-2">
@@ -193,6 +195,7 @@ const SignUp: React.FC = () => {
         </Card>
       </div>
     </div>
+    </MainLayout>
   );
 };
 

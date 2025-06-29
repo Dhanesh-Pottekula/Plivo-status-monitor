@@ -1,6 +1,5 @@
 import React, { useState } from 'react';
 import type { ReactNode } from 'react';
-import { useAuth } from '../_contexts/AuthContext';
 import Sidebar from '../components/Sidebar';
 
 interface MainLayoutProps {
@@ -31,9 +30,9 @@ const MainLayout: React.FC<MainLayoutProps> = ({ children }) => {
         <Sidebar />
       </div>
 
-      <div className="flex-1 flex flex-col">
+      <div className="flex-1 flex flex-col ">
         {/* Main Content */}
-        <main className="flex-1 max-w-[100vw] p-4 overflow-y-auto">
+        <main className="flex-1 max-w-[100vw] p-4 overflow-y-auto max-h-screen ">
           {children}
         </main>
       </div>

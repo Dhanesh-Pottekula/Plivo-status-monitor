@@ -23,6 +23,7 @@ import {
 import { type IncidentFormData } from "./types";
 import { type AppDispatch, type RootState } from "@/_redux/store";
 import { formatDate, getStatusBadgeVariant } from "@/_helpers/commonFunctions";
+import { useAuth } from "@/_contexts/AuthContext";
 
 interface IncidentsListProps {
   serviceId: number;
@@ -31,7 +32,7 @@ interface IncidentsListProps {
 function IncidentsList({ serviceId }: IncidentsListProps) {
   const dispatch = useDispatch<AppDispatch>();
   const { incidents, loading } = useSelector((state: RootState) => state.getIncidentsReducer);
-
+  const { is_have_edit_access } = useAuth();
   // Modal states
   const [isCreateModalOpen, setIsCreateModalOpen] = useState(false);
   const [isEditModalOpen, setIsEditModalOpen] = useState(false);
@@ -163,10 +164,10 @@ function IncidentsList({ serviceId }: IncidentsListProps) {
       {/* Header */}
       <div className="flex justify-between items-center">
         <h2 className="text-xl font-semibold text-gray-900">Incidents</h2>
-        <Button onClick={() => setIsCreateModalOpen(true)} size="sm">
+        {is_have_edit_access && <Button onClick={() => setIsCreateModalOpen(true)} size="sm">
           <Plus className="h-3 w-3 mr-1" />
           Create Incident
-        </Button>
+        </Button>}
       </div>
 
       {/* Incidents List */}
@@ -195,22 +196,22 @@ function IncidentsList({ serviceId }: IncidentsListProps) {
                         )?.label
                       }
                     </Badge>
-                    <Button
+                    {is_have_edit_access && <Button
                       onClick={() => openEditModal(incident)}
                       variant="ghost"
                       size="sm"
                       className="h-7 w-7 p-0"
                     >
                       <Edit className="h-3 w-3" />
-                    </Button>
-                    <Button
+                    </Button>}
+                  {is_have_edit_access && <Button
                       onClick={() => openDeleteModal(incident)}
                       variant="ghost"
                       size="sm"
                       className="h-7 w-7 p-0 text-red-500 hover:text-red-700"
                     >
                       <Trash2 className="h-3 w-3" />
-                    </Button>
+                    </Button>}
                   </div>
                 </CardTitle>
               </CardHeader>

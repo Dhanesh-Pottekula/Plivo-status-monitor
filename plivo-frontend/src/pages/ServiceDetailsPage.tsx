@@ -20,12 +20,13 @@ import { EditServiceModal, DeleteServiceModal, IncidentsList } from "@/component
 import { type ServiceFormData } from "@/components/ServicesPage/types";
 import { getStatusBadgeVariant } from "@/_helpers/commonFunctions";
 import TimelineComponent from "@/components/TimelineComponent";
+import { useAuth } from "@/_contexts/AuthContext";
 
 function ServiceDetailsPage() {
   const { service_id } = useParams<{ service_id: string }>();
   const navigate = useNavigate();
   const dispatch = useDispatch<AppDispatch>();
-
+  const { is_have_edit_access } = useAuth();
   const { service, loading } = useSelector((state: RootState) => state.getServiceDetailsReducer);
 
   // Modal states
@@ -116,17 +117,16 @@ function ServiceDetailsPage() {
           <div className="container mx-auto px-4 py-6">
             {/* Header */}
             <div className="flex items-center justify-between mb-6">
-              <div className="flex items-center space-x-3">
+              <div className="flex items-center w-full space-x-3">
                 <Button onClick={handleBack} variant="outline" size="sm" className="h-8">
                   <ArrowLeft className="h-4 w-4 mr-1" />
                   Back
                 </Button>
-                <div>
+                <div className="flex-1">
                   <h1 className="text-2xl font-semibold text-gray-900">{service.name}</h1>
-                  <p className="text-sm text-gray-500">Service Details</p>
                 </div>
               </div>
-              <div className="flex items-center space-x-2">
+             {is_have_edit_access && <div className="flex items-center space-x-2">
                 <Button onClick={handleEdit} variant="outline" size="sm" className="h-8">
                   <Edit className="h-4 w-4 mr-1" />
                   Edit
@@ -135,7 +135,7 @@ function ServiceDetailsPage() {
                   <Trash2 className="h-4 w-4 mr-1" />
                   Delete
                 </Button>
-              </div>
+              </div>}
             </div>
 
             <div className="grid gap-4 lg:grid-cols-12">

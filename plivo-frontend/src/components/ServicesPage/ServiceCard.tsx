@@ -16,6 +16,7 @@ import { type ServiceInterface, type ServiceStatusType } from "./types";
 import { useNavigate } from "react-router-dom";
 import { appRoutes } from "@/config/appRoutes";
 import { formatDate, getStatusBadgeVariant } from "@/_helpers/commonFunctions";
+import { useAuth } from "@/_contexts/AuthContext";
 
 interface ServiceCardProps {
   service: ServiceInterface;
@@ -25,7 +26,7 @@ interface ServiceCardProps {
 
 function ServiceCard({ service, onEdit, onDelete }: ServiceCardProps) {
   const navigate = useNavigate();
- 
+  const { is_have_edit_access } = useAuth();
   const onViewDetails = (service: ServiceInterface) => {
     navigate(appRoutes.service_details.replace(':service_id', service.id.toString()));
   };
@@ -54,14 +55,14 @@ function ServiceCard({ service, onEdit, onDelete }: ServiceCardProps) {
                 <span className="text-xs font-medium">Private</span>
               </div>
             )}
-            <Button
+            {is_have_edit_access && <Button
               variant="ghost"
               size="sm"
               onClick={() => onEdit(service)}
               className="h-8 w-8 p-0 hover:bg-gray-100 hover:text-blue-600 transition-colors"
             >
               <Edit className="h-4 w-4" />
-            </Button>
+            </Button>}
           </div>
         </div>
       </CardHeader>
@@ -101,15 +102,15 @@ function ServiceCard({ service, onEdit, onDelete }: ServiceCardProps) {
             <Eye className="h-4 w-4 mr-2" />
             View Details
           </Button>
-          <Button
-            variant="outline"
-            size="sm"
-            onClick={() => onDelete(service)}
-            className="flex-1 text-red-600 hover:text-red-700 hover:bg-red-50 hover:border-red-300 transition-all duration-200 font-medium"
-          >
-            <Trash2 className="h-4 w-4 mr-2" />
-            Delete
-          </Button>
+        {is_have_edit_access && <Button
+              variant="outline"
+              size="sm"
+              onClick={() => onDelete(service)}
+              className="flex-1 text-red-600 hover:text-red-700 hover:bg-red-50 hover:border-red-300 transition-all duration-200 font-medium"
+            >
+              <Trash2 className="h-4 w-4 mr-2" />
+              Delete
+            </Button>}
         </div>
       </CardContent>
     </Card>

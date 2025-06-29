@@ -18,6 +18,7 @@ export interface UserInterface {
   email: string;
   full_name: string;
   phone?: string;
+  has_access: boolean;
   address?: string;
   city?: string;
   state?: string;
