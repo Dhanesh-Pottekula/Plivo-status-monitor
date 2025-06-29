@@ -36,7 +36,7 @@ function ServiceCard({ service, onEdit, onDelete }: ServiceCardProps) {
       <CardHeader className="pb-4 flex-shrink-0 px-6 pt-6">
         <div className="flex justify-between items-start gap-3">
           <div className="flex-1 min-w-0">
-            <CardTitle className="text-xl font-semibold leading-tight mb-3 text-gray-900 group-hover:text-blue-600 transition-colors">
+            <CardTitle className="text-lg font-semibold leading-tight mb-3 text-gray-900 group-hover:text-blue-600 transition-colors">
               {service.name}
             </CardTitle>
             <CardDescription className="text-sm leading-relaxed text-gray-600 line-clamp-2">

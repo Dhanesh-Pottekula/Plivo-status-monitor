@@ -466,7 +466,8 @@ def update_user_access_view(request):
 
 
 @api_view(['GET'])
-@permission_classes([IsAuthenticated])
+@permission_classes([AllowAny])
+@public_endpoint
 def get_organization_details_view(request, organization_id):
     """
     Get specific organization details by ID
@@ -479,15 +480,6 @@ def get_organization_details_view(request, organization_id):
             return Response(
                 {'error': 'Organization not found'}, 
                 status=status.HTTP_404_NOT_FOUND
-            )
-        
-        # Check permissions
-        # Admin users can see any organization
-        # Regular users can only see their own organization
-        if request.user.role != 'admin' and request.user.organization != organization:
-            return Response(
-                {'error': 'You do not have permission to view this organization'}, 
-                status=status.HTTP_403_FORBIDDEN
             )
         
         # Get organization data

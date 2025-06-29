@@ -63,7 +63,7 @@ const Sidebar: React.FC<SidebarProps> = ({ onClose }) => {
     return (!item.adminOnly && !item.teamOnly && !item.userOnly )||
       (user?.role === UserRole.ADMIN && item.adminOnly) ||
       (user?.role === UserRole.TEAM && item.teamOnly) ||
-      (user?.role === UserRole.USER && item.userOnly);
+      (!user?.role&& item.userOnly);
   });
 
   const handleLogout = async () => {
@@ -79,7 +79,7 @@ const Sidebar: React.FC<SidebarProps> = ({ onClose }) => {
       </div>
 
       {/* User Info */}
-      {user&&<div className="px-6 py-4">
+      {user?.role&&<div className="px-6 py-4">
         <div className="flex items-center space-x-3">
           <Avatar className="h-10 w-10">
             <AvatarImage src="" alt={user?.username || "User"} />

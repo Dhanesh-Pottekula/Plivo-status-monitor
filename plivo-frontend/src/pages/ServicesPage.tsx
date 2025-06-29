@@ -8,6 +8,7 @@ import {
   ServicesGrid,
 } from "@/components/ServicesPage";
 import TimelineComponent from "@/components/TimelineComponent";
+import OrganizationCard from "@/components/OrganizationCard";
 
 function ServicesPage() {
   const {
@@ -38,10 +39,14 @@ function ServicesPage() {
   return (
     <MainLayout>
       <div className="container mx-auto p-6 bg-white space-y-6">
-        {/* Services Grid */}
+        {/* Organization Card */}
+        {currentOrganization && (
+          <OrganizationCard organization={currentOrganization} />
+        )}
 
+        {/* Services Grid */}
         <div className="flex justify-between items-center">
-          <h3 className="text-2xl font-bold text-gray-700">{currentOrganization?.name} Services</h3>
+          <h3 className="text-lg font-bold text-gray-700">{currentOrganization?.name} Services</h3>
        {is_have_edit_access && <CreateServiceModal
           isOpen={isCreateModalOpen}
           onOpenChange={setIsCreateModalOpen}
