@@ -10,6 +10,7 @@ interface UserState {
   error?: string | null;
   services?: ServiceInterface[] | [];
   loading?: boolean;
+  service?: ServiceInterface | null;
 }
 
 const initialState: UserState = {
@@ -51,92 +52,43 @@ export const getServicesListReducer = (
         error: (action.payload as { message: string })?.message || "Failed to fetch services",
         message: null,
       };
+    
+    default:
+      return state;
+  }
+};
 
-    case serviceConstants.CREATE_SERVICE.REQUEST:
+export const getServiceDetailsReducer = (
+  state = initialState,
+  action: ServiceActionTypes
+): UserState => {
+  switch (action.type) {
+    case serviceConstants.GET_SERVICE_DETAILS.REQUEST:
       return {
         ...state,
-        loading: true,
+        loading: true,  
         type: "alert-info",
-        message: "Creating service...",
+        message: "Loading service details...",
       };
-    case serviceConstants.CREATE_SERVICE.SUCCESS: {
-      const newService = action.payload as ServiceInterface;
+    case serviceConstants.GET_SERVICE_DETAILS.SUCCESS: {
+      const response = action.payload as ServiceInterface;
       return {
         ...state,
         loading: false,
-        type: "alert-success",
-        message: "Service created successfully",
-        services: [...(state.services || []), newService],
+        type: "alert-success",  
+        message: "Service details fetched successfully",
+        service: response as ServiceInterface,
         error: null,
       };
     }
-    case serviceConstants.CREATE_SERVICE.FAILURE:
+    case serviceConstants.GET_SERVICE_DETAILS.FAILURE:
       return {
         ...state,
         loading: false,
         type: "alert-error",
-        error: (action.payload as { message: string })?.message || "Failed to create service",
+        error: (action.payload as { message: string })?.message || "Failed to fetch service details",
         message: null,
       };
-
-    case serviceConstants.UPDATE_SERVICE.REQUEST:
-      return {
-        ...state,
-        loading: true,
-        type: "alert-info",
-        message: "Updating service...",
-      };
-    case serviceConstants.UPDATE_SERVICE.SUCCESS: {
-      const updatedService = action.payload as ServiceInterface;
-      const updatedServices = (state.services || []).map(service =>
-        service.id === updatedService.id ? updatedService : service
-      );
-      return {
-        ...state,
-        loading: false,
-        type: "alert-success",
-        message: "Service updated successfully",
-        services: updatedServices,
-        error: null,
-      };
-    }
-    case serviceConstants.UPDATE_SERVICE.FAILURE:
-      return {
-        ...state,
-        loading: false,
-        type: "alert-error",
-        error: (action.payload as { message: string })?.message || "Failed to update service",
-        message: null,
-      };
-
-    case serviceConstants.DELETE_SERVICE.REQUEST:
-      return {
-        ...state,
-        loading: true,
-        type: "alert-info",
-        message: "Deleting service...",
-      };
-    case serviceConstants.DELETE_SERVICE.SUCCESS: {
-      const { id } = action.payload as { id: number };
-      const filteredServices = (state.services || []).filter(service => service.id !== id);
-      return {
-        ...state,
-        loading: false,
-        type: "alert-success",
-        message: "Service deleted successfully",
-        services: filteredServices,
-        error: null,
-      };
-    }
-    case serviceConstants.DELETE_SERVICE.FAILURE:
-      return {
-        ...state,
-        loading: false,
-        type: "alert-error",
-        error: (action.payload as { message: string })?.message || "Failed to delete service",
-        message: null,
-      };
-
     default:
       return state;
   }

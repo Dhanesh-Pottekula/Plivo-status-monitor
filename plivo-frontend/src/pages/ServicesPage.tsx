@@ -6,16 +6,12 @@ import {
   EditServiceModal,
   DeleteServiceModal,
   ServicesGrid,
-  AlertMessage,
 } from "@/components/ServicesPage";
 
 function ServicesPage() {
   const {
     services,
     loading,
-    message,
-    error,
-    type,
     isCreateModalOpen,
     setIsCreateModalOpen,
     isEditModalOpen,

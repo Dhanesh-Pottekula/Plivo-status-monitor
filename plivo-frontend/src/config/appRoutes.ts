@@ -6,4 +6,5 @@ export const appRoutes = {
   team_dashboard: "/team_dashboard",
   team_members: "/team_members",
   services: "/services/:org_id",
+  service_details: "/service/:service_id",
 };

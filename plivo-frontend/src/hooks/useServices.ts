@@ -32,11 +32,18 @@ export const useServices = () => {
   const [selectedService, setSelectedService] = useState<ServiceInterface | null>(null);
   const [formData, setFormData] = useState<ServiceFormData>(initialFormData);
   useEffect(() => {
-    dispatch(getServicesAction());
+    getServicesList();
   }, [dispatch]);
+  const getServicesList = async () => {
+    const result = await dispatch(getServicesAction());
+    if (result.success) {
+      return result.data;
+    }
+  };
 
   const handleCreateService = async () => {
     const result = await createService(formData);
+    getServicesList()
     if (result.success) {
       setIsCreateModalOpen(false);
       setFormData(initialFormData);
@@ -47,6 +54,7 @@ export const useServices = () => {
     if (!selectedService) return;
     
     const result = await updateService(selectedService.id, formData);
+    getServicesList()
     if (result.success) {
       setIsEditModalOpen(false);
       setSelectedService(null);
@@ -58,6 +66,7 @@ export const useServices = () => {
     if (!selectedService) return;
     
     const result = await deleteService(selectedService.id);
+    getServicesList()
     if (result.success) {
       setIsDeleteModalOpen(false);
       setSelectedService(null);

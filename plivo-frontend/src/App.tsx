@@ -14,6 +14,8 @@ import AdminDashboard from "./pages/AdminDashboard";
 import TeamMembers from "./pages/TeamMembers";
 import { store } from "./_redux/store";
 import ServicesPage from "./pages/ServicesPage";
+import ServiceDetailsPage from "./pages/ServiceDetailsPage";
+
 // App Routes component
 const AppRoutes: React.FC = () => {
   return (
@@ -36,6 +38,7 @@ const AppRoutes: React.FC = () => {
 
         {/* Common routes */}
         <Route path={appRoutes.services} element={<ServicesPage />} />
+        <Route path={appRoutes.service_details} element={<ServiceDetailsPage />} />
       </Route>
 
       {/* Catch all route */}

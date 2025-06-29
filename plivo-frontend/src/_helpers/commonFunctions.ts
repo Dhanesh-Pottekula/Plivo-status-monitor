@@ -1,3 +1,5 @@
+import type { ServiceStatusType } from "@/_constants/Interfaces/ServicesInterface";
+
 export const handleError = (error: unknown) => {
     if (error && typeof error === 'object' && 'response' in error) {
       const response = (error as { response?: { data?: { message?: string } } }).response;
@@ -8,3 +10,29 @@ export const handleError = (error: unknown) => {
     return { message: 'Something went wrong' };
   };
   
+
+  export const getStatusBadgeVariant = (status: ServiceStatusType) => {
+    switch (status) {
+      case "operational":
+        return "default";
+      case "degraded_performance":
+        return "secondary";
+      case "partial_outage":
+        return "destructive";
+      case "major_outage":
+        return "destructive";
+      default:
+        return "default";
+    }
+  };
+
+  export const formatDate = (dateString: string) => {
+    return new Date(dateString).toLocaleDateString("en-US", {
+      year: "numeric",
+      month: "long",
+      day: "numeric",
+      hour: "2-digit",
+      minute: "2-digit",
+      second: "2-digit",
+    });
+  };
