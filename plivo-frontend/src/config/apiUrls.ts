@@ -10,5 +10,12 @@ export const apiUrls = {
         logout: '/api/auth/logout/',
         verifyInviteToken: '/api/invite/verify/',
         grantAccess: '/api/invite/update-access/',
+    },
+    services: {
+        getServicesList: '/api/services/',
+        createService: '/api/services/create/',
+        updateService: '/api/services/:id/update/',
+        deleteService: '/api/services/:id/delete/',
+        getSeriviceDetails: '/api/services/:id/',
     }
 }

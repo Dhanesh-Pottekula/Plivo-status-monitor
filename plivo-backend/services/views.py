@@ -56,13 +56,6 @@ def get_service(request, service_id):
     try:
         service = Service.objects.get(id=service_id)
         
-        # Check if user has access to this service
-        if request.user.is_authenticated:
-            if request.user.organization != service.organization and not request.user.is_admin:
-                return Response({
-                    'error': 'Access denied. You can only view services from your organization.'
-                }, status=status.HTTP_403_FORBIDDEN)
-        
         serializer = ServiceSerializer(service)
         return Response(serializer.data)
         

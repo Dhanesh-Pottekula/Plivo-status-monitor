@@ -5,4 +5,5 @@ export const appRoutes = {
   admin_dashboard: "/admin_dashboard",
   team_dashboard: "/team_dashboard",
   team_members: "/team_members",
+  services: "/services/:org_id",
 };

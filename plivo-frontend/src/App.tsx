@@ -13,6 +13,7 @@ import { Provider } from "react-redux";
 import AdminDashboard from "./pages/AdminDashboard";
 import TeamMembers from "./pages/TeamMembers";
 import { store } from "./_redux/store";
+import ServicesPage from "./pages/ServicesPage";
 // App Routes component
 const AppRoutes: React.FC = () => {
   return (
@@ -21,6 +22,7 @@ const AppRoutes: React.FC = () => {
       <Route element={<PublicRoute />}>
         <Route path={appRoutes.login} element={<LoginPage />} />
         <Route path={appRoutes.signup} element={<SignUp />} />
+        {/* <Route path={appRoutes.services} element={<ServicesPage />} /> */}
       </Route>
       <Route path={appRoutes.dashboard} element={<BaseUrlComponent />} />
 
@@ -33,6 +35,7 @@ const AppRoutes: React.FC = () => {
         </Route>
 
         {/* Common routes */}
+        <Route path={appRoutes.services} element={<ServicesPage />} />
       </Route>
 
       {/* Catch all route */}

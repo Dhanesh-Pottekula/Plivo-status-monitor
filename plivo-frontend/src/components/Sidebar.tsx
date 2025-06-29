@@ -1,12 +1,12 @@
 import React from 'react';
-import { Link, useLocation } from 'react-router-dom';
+import { useLocation, useNavigate } from 'react-router-dom';
 import { useAuth } from '../_contexts/AuthContext';
 import { appRoutes } from '../config/appRoutes';
 import { UserRole } from '../_constants/Interfaces/UserInterfaces';
 import { Button } from './ui/button';
 import { Avatar, AvatarFallback, AvatarImage } from './ui/avatar';
 import { Separator } from './ui/separator';
-import { BarChart3Icon, LogOut, UsersIcon } from 'lucide-react';
+import { BarChart3Icon, LogOut, ServerIcon, UsersIcon } from 'lucide-react';
 import { logoutAction } from '@/_redux/actions/user.actions';
 import { useDispatch } from 'react-redux';
 import type { AppDispatch } from '@/_redux/store';
@@ -18,6 +18,7 @@ interface SidebarProps {
 const Sidebar: React.FC<SidebarProps> = ({ onClose }) => {
   const { user } = useAuth();
   const location = useLocation();
+  const navigate = useNavigate();
   const dispatch = useDispatch<AppDispatch>();
   const navigationItems = [
     {
@@ -26,16 +27,23 @@ const Sidebar: React.FC<SidebarProps> = ({ onClose }) => {
       icon: <BarChart3Icon className="h-4 w-4" />,
       adminOnly: true
     },
-    {
-      name: 'Team Members',
-      href: appRoutes.team_members,
-      icon: <UsersIcon className="h-4 w-4" />,
-      adminOnly: true
-    },
+      {
+        name: 'Team Members',
+        href: appRoutes.team_members,
+        icon: <UsersIcon className="h-4 w-4" />,
+        adminOnly: true
+      },
+      {
+        name: 'Services',
+        href: appRoutes.services.replace(':org_id', user?.organization?.id || ''),
+        icon: <ServerIcon className="h-4 w-4" />,
+        adminOnly: false
+      },
 
   ];
 
-  const handleLinkClick = () => {
+  const handleLinkClick = (href: string) => {
+    navigate(href);
     if (onClose) {
       onClose();
     }
@@ -86,19 +94,20 @@ const Sidebar: React.FC<SidebarProps> = ({ onClose }) => {
       <nav className="flex-1 px-3 py-4">
         <div className="space-y-1">
           {filteredItems.map((item) => (
-            <Link
+            <Button
               key={item.name}
-              to={item.href}
-              onClick={handleLinkClick}
-              className={`flex items-center space-x-3 px-3 py-2.5 rounded-lg text-sm font-medium transition-all duration-200 ${
+              variant="ghost"
+              size="sm"
+              onClick={() => handleLinkClick(item.href)}
+              className={`w-full justify-start ${
                 isActive(item.href)
-                  ? 'bg-blue-50 text-blue-700 border border-blue-200'
+                  ? 'bg-blue-50 text-blue-700 border border-blue-200 hover:bg-blue-100'
                   : 'text-gray-600 hover:bg-gray-50 hover:text-gray-900'
               }`}
             >
-              <span className="text-gray-500">{item.icon}</span>
+              <span className="text-gray-500 mr-3">{item.icon}</span>
               <span>{item.name}</span>
-            </Link>
+            </Button>
           ))}
         </div>
       </nav>
