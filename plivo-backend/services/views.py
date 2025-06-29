@@ -23,6 +23,7 @@ from .serializers import (
     IncidentCreateSerializer,
     IncidentUpdateSerializer
 )
+from timeline.views import log_timeline_event
 
 # Create your views here.
 
@@ -118,6 +119,9 @@ def update_service(request, service_id):
                 'error': 'Access denied. You can only update services from your organization.'
             }, status=status.HTTP_403_FORBIDDEN)
         
+        # Store old status for comparison
+        old_status = service.current_status
+        
         serializer = ServiceUpdateSerializer(
             service, 
             data=request.data,
@@ -127,6 +131,19 @@ def update_service(request, service_id):
         if serializer.is_valid():
             updated_service = serializer.save()
             response_serializer = ServiceSerializer(updated_service)
+            
+            # Log timeline event for status change
+            if old_status != updated_service.current_status:
+                log_timeline_event(
+                    event_type='service_status_changed',
+                    user=request.user,
+                    content_object=updated_service,
+                    title=f"Service status changed from {old_status} to {updated_service.current_status}",
+                    description=f"Service '{updated_service.name}' status updated",
+                    old_value=old_status,
+                    new_value=updated_service.current_status
+                )
+            
             return Response(response_serializer.data)
         else:
             return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
@@ -215,6 +232,16 @@ def create_incident(request, service_id):
         if serializer.is_valid():
             incident = serializer.save()
             response_serializer = IncidentSerializer(incident)
+            
+            # Log timeline event for incident creation
+            log_timeline_event(
+                event_type='incident_created',
+                user=request.user,
+                content_object=incident,
+                title=f"Incident created: {incident.title}",
+                description=f"New {incident.severity} severity incident created for service '{service.name}'"
+            )
+            
             return Response(response_serializer.data, status=status.HTTP_201_CREATED)
         else:
             return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
@@ -228,39 +255,6 @@ def create_incident(request, service_id):
         return Response({
             'error': f'Internal server error: {str(e)}'
         }, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
-
-
-@api_view(['GET'])
-@permission_classes([IsAuthenticated])
-def get_incident(request, service_id, incident_id):
-    """Get a specific incident by ID"""
-    try:
-        # Verify service exists and user has access
-        service = Service.objects.get(id=service_id)
-        if service.organization != request.user.organization:
-            return Response({
-                'error': 'Access denied. You can only view incidents for services in your organization.'
-            }, status=status.HTTP_403_FORBIDDEN)
-        
-        incident = Incident.objects.get(id=incident_id, service=service)
-        serializer = IncidentSerializer(incident)
-        return Response(serializer.data)
-        
-    except Service.DoesNotExist:
-        return Response({
-            'error': 'Service not found'
-        }, status=status.HTTP_404_NOT_FOUND)
-        
-    except Incident.DoesNotExist:
-        return Response({
-            'error': 'Incident not found'
-        }, status=status.HTTP_404_NOT_FOUND)
-        
-    except Exception as e:
-        return Response({
-            'error': f'Internal server error: {str(e)}'
-        }, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
-
 
 @api_view(['PUT'])
 @permission_classes([IsAuthenticated])
@@ -276,6 +270,10 @@ def update_incident(request, service_id, incident_id):
         
         incident = Incident.objects.get(id=incident_id, service=service)
         
+        # Store old values for comparison
+        old_status = incident.status
+        old_severity = incident.severity
+        
         serializer = IncidentUpdateSerializer(
             incident,
             data=request.data,
@@ -285,6 +283,16 @@ def update_incident(request, service_id, incident_id):
         if serializer.is_valid():
             updated_incident = serializer.save()
             response_serializer = IncidentSerializer(updated_incident)
+            
+            # Log timeline event for incident update
+            log_timeline_event(
+                event_type='incident_updated',
+                user=request.user,
+                content_object=updated_incident,
+                title=f"Incident updated: {updated_incident.title}",
+                description=f"Incident for service '{service.name}' was updated"
+            )
+            
             return Response(response_serializer.data)
         else:
             return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
@@ -318,6 +326,20 @@ def delete_incident(request, service_id, incident_id):
             }, status=status.HTTP_403_FORBIDDEN)
         
         incident = Incident.objects.get(id=incident_id, service=service)
+        
+        # Store incident info before deletion for timeline logging
+        incident_title = incident.title
+        incident_severity = incident.severity
+        
+        # Log timeline event for incident deletion
+        log_timeline_event(
+            event_type='incident_deleted',
+            user=request.user,
+            content_object=incident,
+            title=f"Incident deleted: {incident_title}",
+            description=f"{incident_severity} severity incident deleted from service '{service.name}'"
+        )
+        
         incident.delete()
         
         return Response({

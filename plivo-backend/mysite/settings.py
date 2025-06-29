@@ -42,6 +42,7 @@ INSTALLED_APPS = [
     'corsheaders',
     'users.apps.UsersConfig',
     'services.apps.ServicesConfig',
+    'timeline.apps.TimelineConfig',
 ]
 
 MIDDLEWARE = [

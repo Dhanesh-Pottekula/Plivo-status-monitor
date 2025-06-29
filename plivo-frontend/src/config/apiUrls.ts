@@ -24,5 +24,9 @@ export const apiUrls = {
         get: (serviceId: number, incidentId: number) => `/api/services/${serviceId}/incidents/${incidentId}/`,
         update: (serviceId: number, incidentId: number) => `/api/services/${serviceId}/incidents/${incidentId}/update/`,
         delete: (serviceId: number, incidentId: number) => `/api/services/${serviceId}/incidents/${incidentId}/delete/`,
+    },
+    timeline: {
+        getTimeLineOfService: (serviceId: number) => `/api/timeline/service/${serviceId}/`,
+        getTimeLineOfOrganization: () => `/api/timeline/`,
     }
 }
