@@ -22,6 +22,8 @@ import { getStatusBadgeVariant } from "@/_helpers/commonFunctions";
 import TimelineComponent from "@/components/TimelineComponent";
 import { useAuth } from "@/_contexts/AuthContext";
 import { getTimeLineOfServiceAction } from "@/_redux/actions/timeline.actions";
+import { useRoomSocket } from "@/hooks/useRoomSocket";
+import { SOCKET_ROOM_INCIDENT_UPDATE } from "@/_constants/socketConstants";
 
 function ServiceDetailsPage() {
   const { service_id } = useParams<{ service_id: string }>();
@@ -39,6 +41,9 @@ function ServiceDetailsPage() {
     currentStatus: "operational",
     publiclyVisible: true,
   });
+
+  // for incident updates
+useRoomSocket(SOCKET_ROOM_INCIDENT_UPDATE(service?.organization?.id||"",service_id||""));
 
   useEffect(() => {
     if (service_id) {
@@ -72,11 +77,7 @@ function ServiceDetailsPage() {
     try {
       await dispatch(updateServiceAction(service.id, formData));
       setIsEditModalOpen(false);
-      // Refresh service details
-      if (service_id) {
-        await dispatch(getServiceDetialAction(parseInt(service_id)));
-        await dispatch(getTimeLineOfServiceAction(parseInt(service_id)));
-      }
+      // WebSocket will handle refreshing the service details and timeline
     } catch (error) {
       console.error('Failed to update service:', error);
     }

@@ -10,8 +10,8 @@ const BaseUrlComponent = () => {
   }
   if (user?.role === "admin") {
     return <Navigate replace to={appRoutes.team_members} />;
-  }else if (user?.role === "team") {
-    return <Navigate replace to={appRoutes.organizations_list} />;
+  }else if (user?.role === "team" && user?.organization?.id) {
+    return <Navigate replace to={appRoutes.services.replace(":orgId",user?.organization?.id||"")} />;
   }else{
     return <Navigate replace to={appRoutes.organizations_list} />;
   }

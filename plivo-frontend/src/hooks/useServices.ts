@@ -63,7 +63,6 @@ export const useServices = () => {
 
   const handleCreateService = async () => {
     const result = await createService(formData);
-    getServicesList(org_id||"");
     if (result.success) {
       setIsCreateModalOpen(false);
       setFormData(initialFormData);
@@ -74,8 +73,6 @@ export const useServices = () => {
     if (!selectedService) return;
     
     const result = await updateService(selectedService.id, formData);
-    getServicesList(org_id||"");
-    await dispatch(getTimeLineOfOrganizationAction(org_id||""));
     if (result.success) {
       setIsEditModalOpen(false);
       setSelectedService(null);
@@ -87,7 +84,6 @@ export const useServices = () => {
     if (!selectedService) return;
     
     const result = await deleteService(selectedService.id);
-    getServicesList(org_id||"");
     if (result.success) {
       setIsDeleteModalOpen(false);
       setSelectedService(null);

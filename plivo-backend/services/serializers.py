@@ -12,8 +12,8 @@ class OrganizationSerializer(serializers.ModelSerializer):
         fields = ['id', 'name', 'domain']
     
     def get_id(self, obj):
-        """Return organization ID in the format org_xyz_corp"""
-        return f"org_{obj.id}"
+        """Return organization ID in the format xyz_corp"""
+        return f"{obj.id}"
 
 
 class ServiceSerializer(serializers.ModelSerializer):
@@ -50,13 +50,9 @@ class ServiceSerializer(serializers.ModelSerializer):
     
     def validate_organizationId(self, value):
         """Validate organization ID format and existence"""
-        if not value.startswith('org_'):
-            raise serializers.ValidationError(
-                'Invalid organization ID format. Expected format: org_xyz_corp'
-            )
-        
+       
         try:
-            org_id = int(value[4:])  # Remove 'org_' prefix
+            org_id = int(value)  
             organization = Organization.objects.get(id=org_id)
             return organization
         except (ValueError, Organization.DoesNotExist):
@@ -136,8 +132,8 @@ class ServiceListSerializer(serializers.ModelSerializer):
         ]
     
     def get_organizationId(self, obj):
-        """Return organization ID in the format org_xyz_corp"""
-        return f"org_{obj.organization.id}"
+        """Return organization ID in the format xyz_corp"""
+        return f"{obj.organization.id}"
 
 
 class ServiceCreateSerializer(serializers.ModelSerializer):

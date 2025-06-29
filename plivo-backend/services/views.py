@@ -143,15 +143,14 @@ def update_service(request, service_id):
             response_serializer = ServiceSerializer(updated_service)
             
             # Log timeline event for status change
-            if old_status != updated_service.current_status:
-                log_timeline_event(
-                    event_type='service_status_changed',
-                    user=request.user,
-                    content_object=updated_service,
-                    title=f"Service status changed from {old_status} to {updated_service.current_status}",
-                    description=f"Service '{updated_service.name}' status updated",
-                    old_value=old_status,
-                    new_value=updated_service.current_status
+            log_timeline_event(
+                event_type='service_updated',
+                user=request.user,
+                content_object=updated_service,
+                title=f"Service status changed from {old_status} to {updated_service.current_status}",
+                description=f"Service '{updated_service.name}' status updated",
+                old_value=old_status,
+                new_value=updated_service.current_status
                 )
             
             return Response(response_serializer.data)

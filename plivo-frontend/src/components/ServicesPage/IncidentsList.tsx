@@ -92,9 +92,7 @@ function IncidentsList({ serviceId }: IncidentsListProps) {
         status: "investigating",
         severity: "medium",
       });
-      // Refresh incidents list
-      await dispatch(getIncidentsAction(serviceId));
-      await dispatch(getTimeLineOfServiceAction(serviceId));
+     
     } catch (error) {
       console.error('Failed to create incident:', error);
     }
@@ -113,9 +111,7 @@ function IncidentsList({ serviceId }: IncidentsListProps) {
         status: "investigating",
         severity: "medium",
       });
-      // Refresh incidents list
-      await dispatch(getIncidentsAction(serviceId));
-      await dispatch(getTimeLineOfServiceAction(serviceId));
+     
     } catch (error) {
       console.error('Failed to update incident:', error);
     }
@@ -128,9 +124,7 @@ function IncidentsList({ serviceId }: IncidentsListProps) {
       await dispatch(deleteIncidentAction(serviceId, selectedIncident.id));
       setIsDeleteModalOpen(false);
       setSelectedIncident(null);
-      // Refresh incidents list
-      await dispatch(getIncidentsAction(serviceId));
-      await dispatch(getTimeLineOfServiceAction(serviceId));
+     
     } catch (error) {
       console.error('Failed to delete incident:', error);
     }

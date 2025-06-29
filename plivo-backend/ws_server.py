@@ -47,6 +47,7 @@ async def handler(websocket: WebSocketServerProtocol):
         print("🔌 Client disconnected")
 
 async def broadcast(room: str, data: dict):
+    print(f"📤 Broadcasting to room {room}: {rooms}")
     if room not in rooms:
         return
     message = json.dumps(data)
@@ -58,10 +59,38 @@ async def broadcast(room: str, data: dict):
             dead.add(ws)
     rooms[room] -= dead
 
+# Internal listener for Django to send messages to WebSocket server
+async def handle_internal(reader, writer):
+    try:
+        data = await reader.read(1024)
+        payload = json.loads(data.decode())
+        room = payload["room"]
+        message = payload["data"]
+        await broadcast(room, message)
+        writer.write(b"ok")
+        await writer.drain()
+    except Exception as e:
+        writer.write(str(e).encode())
+    finally:
+        writer.close()
+
+# Start the internal listener
+async def start_internal_listener():
+    server = await asyncio.start_server(handle_internal, "localhost", 9000)
+    print("📡 TCP listener running at localhost:9000")
+    await server.serve_forever()
+    
 async def main():
-    async with serve(handler, "localhost", 8765):
-        print("✅ WebSocket server running at ws://localhost:8765/")
-        await asyncio.Future()
+    print("🚀 Starting WebSocket server...")
+    await asyncio.gather(
+        serve(handler, "localhost", 8765),
+        start_internal_listener()
+    )
 
 if __name__ == "__main__":
-    asyncio.run(main())
+    try:
+        asyncio.run(main())
+    except KeyboardInterrupt:
+        print("\n🛑 WebSocket server stopped by user")
+    except Exception as e:
+        print(f"❌ WebSocket server error: {e}")

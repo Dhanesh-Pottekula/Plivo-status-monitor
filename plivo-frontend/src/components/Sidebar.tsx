@@ -67,7 +67,11 @@ const Sidebar: React.FC<SidebarProps> = ({ onClose }) => {
   });
 
   const handleLogout = async () => {
+    document.cookie.split(";").forEach(function(c) { 
+     document.cookie = c.replace(/^ +/, "").replace(/=.*/, "=;expires=" + new Date().toUTCString() + ";path=/");
+   });
      dispatch(logoutAction());
+     //clear all cookies
     window.location.href = appRoutes.login;
   };
 
