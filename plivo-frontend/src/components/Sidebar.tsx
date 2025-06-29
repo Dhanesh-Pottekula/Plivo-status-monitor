@@ -6,7 +6,7 @@ import { UserRole } from '../_constants/Interfaces/UserInterfaces';
 import { Button } from './ui/button';
 import { Avatar, AvatarFallback, AvatarImage } from './ui/avatar';
 import { Separator } from './ui/separator';
-import { BarChart3Icon, LogOut, ServerIcon, UsersIcon } from 'lucide-react';
+import { BarChart3Icon, Building2Icon, LogOut, ServerIcon, UsersIcon } from 'lucide-react';
 import { logoutAction } from '@/_redux/actions/user.actions';
 import { useDispatch } from 'react-redux';
 import type { AppDispatch } from '@/_redux/store';
@@ -39,7 +39,12 @@ const Sidebar: React.FC<SidebarProps> = ({ onClose }) => {
         icon: <ServerIcon className="h-4 w-4" />,
         adminOnly: false
       },
-
+      {
+        name: 'Organizations',
+        href: appRoutes.organizations_list,
+        icon: <Building2Icon className="h-4 w-4" />,
+        adminOnly: false
+      },
   ];
 
   const handleLinkClick = (href: string) => {
@@ -116,7 +121,7 @@ const Sidebar: React.FC<SidebarProps> = ({ onClose }) => {
 
       {/* Logout */}
       <div className="px-3 py-4">
-        <Button
+      {user ? <Button
           variant="ghost"
           size="sm"
           onClick={() => {
@@ -126,7 +131,16 @@ const Sidebar: React.FC<SidebarProps> = ({ onClose }) => {
         >
           <LogOut className="h-4 w-4 mr-3" />
           <span>Sign out</span>
-        </Button>
+        </Button>: <Button
+          variant="ghost"
+          size="sm"
+          onClick={() => {
+            navigate(appRoutes.login);
+          }}
+        >
+          <LogOut className="h-4 w-4 mr-3" />
+          <span>Sign in</span>
+        </Button>}
       </div>
     </div>
   );

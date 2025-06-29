@@ -30,7 +30,6 @@ export default function AdminDashboard() {
         </div>
 
         {/* Organization Timeline */}
-        <TimelineComponent title="Organization Timeline" />
       </div>
     </MainLayout>
   );

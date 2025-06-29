@@ -5,7 +5,7 @@ app_name = 'services'
 
 urlpatterns = [
     # Service CRUD endpoints
-    path('services/', views.list_services, name='list_services'),
+    path('services/<str:org_id>/', views.list_services, name='list_services'),
     path('services/create/', views.create_service, name='create_service'),
     path('services/<str:service_id>/', views.get_service, name='get_service'),
     path('services/<str:service_id>/update/', views.update_service, name='update_service'),

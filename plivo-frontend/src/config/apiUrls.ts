@@ -12,7 +12,7 @@ export const apiUrls = {
         grantAccess: '/api/invite/update-access/',
     },
     services: {
-        getServicesList: '/api/services/',
+        getServicesList: (org_id: string) => `/api/services/${org_id}/`,
         createService: '/api/services/create/',
         updateService: '/api/services/:id/update/',
         deleteService: '/api/services/:id/delete/',
@@ -28,5 +28,9 @@ export const apiUrls = {
     timeline: {
         getTimeLineOfService: (serviceId: number) => `/api/timeline/service/${serviceId}/`,
         getTimeLineOfOrganization: () => `/api/timeline/`,
+    },
+    organizations: {
+        getOrganizationDetails: (organizationId: string) => `/api/organizations/${organizationId}/`,
+        getOrganizationsList: () => `/api/organizations/`,
     }
 }

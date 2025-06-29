@@ -31,37 +31,45 @@ function ServiceCard({ service, onEdit, onDelete }: ServiceCardProps) {
   };
 
   return (
-    <Card className="hover:shadow-lg transition-all duration-200 h-full flex flex-col border-0 shadow-sm">
-      <CardHeader className="pb-4 flex-shrink-0">
+    <Card className="group hover:shadow-xl transition-all duration-300 h-full flex flex-col border border-gray-200 shadow-sm hover:border-gray-300 bg-white">
+      <CardHeader className="pb-4 flex-shrink-0 px-6 pt-6">
         <div className="flex justify-between items-start gap-3">
           <div className="flex-1 min-w-0">
-            <CardTitle className="text-lg font-semibold leading-tight mb-2 text-gray-900">{service.name}</CardTitle>
-            <CardDescription className="text-sm leading-relaxed text-gray-600">
+            <CardTitle className="text-xl font-semibold leading-tight mb-3 text-gray-900 group-hover:text-blue-600 transition-colors">
+              {service.name}
+            </CardTitle>
+            <CardDescription className="text-sm leading-relaxed text-gray-600 line-clamp-2">
               {service.description}
             </CardDescription>
           </div>
           <div className="flex-shrink-0 flex items-center gap-2">
             {service.publiclyVisible ? (
-              <Eye className="h-4 w-4 text-green-600" />
+              <div className="flex items-center gap-1 text-green-600 bg-green-50 px-2 py-1 rounded-full">
+                <Eye className="h-3 w-3" />
+                <span className="text-xs font-medium">Public</span>
+              </div>
             ) : (
-              <EyeOff className="h-4 w-4 text-gray-400" />
+              <div className="flex items-center gap-1 text-gray-500 bg-gray-50 px-2 py-1 rounded-full">
+                <EyeOff className="h-3 w-3" />
+                <span className="text-xs font-medium">Private</span>
+              </div>
             )}
             <Button
-              variant="outline"
+              variant="ghost"
               size="sm"
               onClick={() => onEdit(service)}
-              className="h-7 px-2 hover:bg-gray-50 hover:border-gray-200 transition-colors"
+              className="h-8 w-8 p-0 hover:bg-gray-100 hover:text-blue-600 transition-colors"
             >
-              <Edit className="h-3 w-3" />
+              <Edit className="h-4 w-4" />
             </Button>
           </div>
         </div>
       </CardHeader>
       
-      <CardContent className="flex-1 flex flex-col space-y-4">
+      <CardContent className="flex-1 flex flex-col space-y-5 px-6 pb-6">
         <div className="flex items-center justify-between">
-          <span className="text-sm font-medium text-gray-700">Status:</span>
-          <Badge variant={getStatusBadgeVariant(service.currentStatus as ServiceStatusType)} className="font-medium">
+          <span className="text-sm font-medium text-gray-700">Status</span>
+          <Badge variant={getStatusBadgeVariant(service.currentStatus as ServiceStatusType)} className="font-medium px-3 py-1">
             {
               SERVICE_STATUS_OPTIONS.find(
                 (opt) => opt.value === service.currentStatus
@@ -72,34 +80,34 @@ function ServiceCard({ service, onEdit, onDelete }: ServiceCardProps) {
 
         <Separator className="my-2" />
 
-        <div className="text-xs text-gray-500 space-y-1">
-          <div className="flex justify-between">
-            <span>Created:</span>
-            <span>{formatDate(service.createdAt)}</span>
+        <div className="text-xs text-gray-500 space-y-2">
+          <div className="flex justify-between items-center">
+            <span className="font-medium">Created</span>
+            <span className="text-gray-700">{formatDate(service.createdAt)}</span>
           </div>
-          <div className="flex justify-between">
-            <span>Updated:</span>
-            <span>{formatDate(service.updatedAt)}</span>
+          <div className="flex justify-between items-center">
+            <span className="font-medium">Updated</span>
+            <span className="text-gray-700">{formatDate(service.updatedAt)}</span>
           </div>
         </div>
 
-        <div className="flex gap-2 mt-auto pt-4">
+        <div className="flex gap-3 mt-auto pt-4">
           <Button 
             variant="outline" 
             size="sm" 
-            className="flex-1 hover:bg-blue-50 hover:border-blue-200 transition-colors" 
+            className="flex-1 hover:bg-blue-50 hover:border-blue-300 hover:text-blue-700 transition-all duration-200 font-medium" 
             onClick={() => onViewDetails(service)}
           >
-            <Eye className="h-3 w-3 mr-1" />
+            <Eye className="h-4 w-4 mr-2" />
             View Details
           </Button>
           <Button
             variant="outline"
             size="sm"
             onClick={() => onDelete(service)}
-            className="flex-1 text-red-600 hover:text-red-700 hover:bg-red-50 hover:border-red-200 transition-colors"
+            className="flex-1 text-red-600 hover:text-red-700 hover:bg-red-50 hover:border-red-300 transition-all duration-200 font-medium"
           >
-            <Trash2 className="h-3 w-3 mr-1" />
+            <Trash2 className="h-4 w-4 mr-2" />
             Delete
           </Button>
         </div>

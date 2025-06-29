@@ -219,31 +219,17 @@ def get_organizations_view(request):
     Get all organizations (for admin users) or user's organization
     """
     try:
-        if request.user.role == 'admin':
-            # Admin can see all organizations
-            organizations = Organization.objects.filter(is_active=True)
-            organizations_data = [{
-                'id': str(org.id),
-                'name': org.name,
-                'domain': org.domain,
-                'created_at': org.created_at.isoformat(),
-                'updated_at': org.updated_at.isoformat(),
-                'is_active': org.is_active
-            } for org in organizations]
-        else:
-            # Regular users can only see their organization
-            if request.user.organization:
-                organizations_data = [{
-                    'id': str(request.user.organization.id),
-                    'name': request.user.organization.name,
-                    'domain': request.user.organization.domain,
-                    'created_at': request.user.organization.created_at.isoformat(),
-                    'updated_at': request.user.organization.updated_at.isoformat(),
-                    'is_active': request.user.organization.is_active
-                }]
-            else:
-                organizations_data = []
-        
+        organizations = Organization.objects.all()
+        organizations_data = [{
+            'id': str(organization.id),
+            'name': organization.name,
+            'domain': organization.domain,
+            'created_at': organization.created_at.isoformat(),
+            'updated_at': organization.updated_at.isoformat(),
+            'is_active': organization.is_active,
+            'user_count': organization.users.count(),
+            'active_user_count': organization.users.filter(is_active=True).count()
+        } for organization in organizations]
         return Response({
             'organizations': organizations_data,
             'success': True
@@ -463,5 +449,54 @@ def update_user_access_view(request):
     except Exception as e:
         return Response(
             {'error': f'Failed to grant access: {str(e)}'}, 
+            status=status.HTTP_400_BAD_REQUEST
+        )
+
+
+@api_view(['GET'])
+@permission_classes([IsAuthenticated])
+def get_organization_details_view(request, organization_id):
+    """
+    Get specific organization details by ID
+    """
+    try:
+        # Check if organization exists
+        try:
+            organization = Organization.objects.get(id=organization_id, is_active=True)
+        except Organization.DoesNotExist:
+            return Response(
+                {'error': 'Organization not found'}, 
+                status=status.HTTP_404_NOT_FOUND
+            )
+        
+        # Check permissions
+        # Admin users can see any organization
+        # Regular users can only see their own organization
+        if request.user.role != 'admin' and request.user.organization != organization:
+            return Response(
+                {'error': 'You do not have permission to view this organization'}, 
+                status=status.HTTP_403_FORBIDDEN
+            )
+        
+        # Get organization data
+        organization_data = {
+            'id': str(organization.id),
+            'name': organization.name,
+            'domain': organization.domain,
+            'created_at': organization.created_at.isoformat(),
+            'updated_at': organization.updated_at.isoformat(),
+            'is_active': organization.is_active,
+            'user_count': organization.users.count(),
+            'active_user_count': organization.users.filter(is_active=True).count()
+        }
+        
+        return Response({
+            'organization': organization_data,
+            'success': True
+        }, status=status.HTTP_200_OK)
+        
+    except Exception as e:
+        return Response(
+            {'error': f'Failed to fetch organization details: {str(e)}'}, 
             status=status.HTTP_400_BAD_REQUEST
         )

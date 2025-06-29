@@ -11,8 +11,10 @@ const BaseUrlComponent = () => {
   }
   if (user?.role === "admin") {
     return <Navigate replace to={appRoutes.admin_dashboard} />;
+  }else{
+    return <Navigate replace to={appRoutes.organizations_list} />;
   }
-  return <Outlet />;
+  // return <Outlet />;
 };
 
 export default BaseUrlComponent;

@@ -7,6 +7,7 @@ import {
   DeleteServiceModal,
   ServicesGrid,
 } from "@/components/ServicesPage";
+import TimelineComponent from "@/components/TimelineComponent";
 
 function ServicesPage() {
   const {
@@ -34,45 +35,45 @@ function ServicesPage() {
 
   return (
     <MainLayout>
-      <div className="container mx-auto p-6 space-y-6">
-        {/* Header */}
-        <div className="flex justify-between items-center">
-          <CreateServiceModal
-            isOpen={isCreateModalOpen}
-            onOpenChange={setIsCreateModalOpen}
-            formData={formData}
-            setFormData={setFormData}
-            onSubmit={handleCreateService}
-          />
-        </div>
-
- 
-
+      <div className="container mx-auto p-6 bg-white space-y-6">
         {/* Services Grid */}
+
+        <div className="flex justify-between items-center">
+          <h3 className="text-2xl font-bold text-gray-700">{}Services</h3>
+        <CreateServiceModal
+          isOpen={isCreateModalOpen}
+          onOpenChange={setIsCreateModalOpen}
+          formData={formData}
+          setFormData={setFormData}
+          onSubmit={handleCreateService}
+        />
+      </div>
         <ServicesGrid
           services={services || []}
           onEdit={openEditModal}
           onDelete={openDeleteModal}
           onCreateService={() => setIsCreateModalOpen(true)}
         />
-
-        {/* Edit Modal */}
-        <EditServiceModal
-          isOpen={isEditModalOpen}
-          onOpenChange={setIsEditModalOpen}
-          formData={formData}
-          setFormData={setFormData}
-          onSubmit={handleUpdateService}
-        />
-
-        {/* Delete Confirmation Modal */}
-        <DeleteServiceModal
-          isOpen={isDeleteModalOpen}
-          onOpenChange={setIsDeleteModalOpen}
-          selectedService={selectedService}
-          onConfirm={handleDeleteService}
-        />
+        <TimelineComponent title="Organization Timeline" />
       </div>
+
+
+      {/* Edit Modal */}
+      <EditServiceModal
+        isOpen={isEditModalOpen}
+        onOpenChange={setIsEditModalOpen}
+        formData={formData}
+        setFormData={setFormData}
+        onSubmit={handleUpdateService}
+      />
+
+      {/* Delete Confirmation Modal */}
+      <DeleteServiceModal
+        isOpen={isDeleteModalOpen}
+        onOpenChange={setIsDeleteModalOpen}
+        selectedService={selectedService}
+        onConfirm={handleDeleteService}
+      />
     </MainLayout>
   );
 }

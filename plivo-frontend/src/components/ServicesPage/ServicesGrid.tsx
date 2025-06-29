@@ -15,16 +15,19 @@ function ServicesGrid({ services, onEdit, onDelete, onCreateService }: ServicesG
   }
 
   return (
-    <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3 auto-rows-fr">
-      {services.map((service) => (
-        <div key={service.id} className="h-full">
-          <ServiceCard
-            service={service}
-            onEdit={onEdit}
-            onDelete={onDelete}
-          />
-        </div>
-      ))}
+    <div className="w-full max-h-[60vh] bg-white p-4 overflow-y-auto shadow-md">
+      {/* Card Container with responsive grid layout */}
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-4 max-w-7xl mx-auto">
+        {services.map((service) => (
+          <div key={service.id} className="w-full">
+            <ServiceCard
+              service={service}
+              onEdit={onEdit}
+              onDelete={onDelete}
+            />
+          </div>
+        ))}
+      </div>
     </div>
   );
 }

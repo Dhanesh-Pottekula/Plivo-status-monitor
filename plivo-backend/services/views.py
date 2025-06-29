@@ -76,11 +76,11 @@ def get_service(request, service_id):
 
 @api_view(['GET'])
 @permission_classes([AllowAny])
-def list_services(request):
+def list_services(request, org_id):
     """List all services for the user's organization"""
     try:
         # Get organization filter from query params
-        org_id_str = request.user.organization.id
+        org_id_str = org_id
         user = request.user
         if not org_id_str:
             return Response({

@@ -8,4 +8,5 @@ export const appRoutes = {
   services: "/services/:org_id",
   service_details: "/service/:service_id",
   incidents: "/incidents/:service_id",
+  organizations_list: "/organizations",
 };

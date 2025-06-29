@@ -14,6 +14,7 @@ urlpatterns = [
     
     # Organization endpoints
     path('organizations/', views.get_organizations_view, name='get_organizations'),
+    path('organizations/<str:organization_id>/', views.get_organization_details_view, name='get_organization_details'),
     
     # Invite link endpoints
     path('invite/create/', views.invite_url_team_member_view, name='create_invite'),

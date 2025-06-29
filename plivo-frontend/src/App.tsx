@@ -15,6 +15,7 @@ import TeamMembers from "./pages/TeamMembers";
 import { store } from "./_redux/store";
 import ServicesPage from "./pages/ServicesPage";
 import ServiceDetailsPage from "./pages/ServiceDetailsPage";
+import OrganizationsList from "./pages/OrganizationsList";
 
 // App Routes component
 const AppRoutes: React.FC = () => {
@@ -22,6 +23,7 @@ const AppRoutes: React.FC = () => {
     <Routes>
       {/* Public routes */}
       <Route element={<PublicRoute />}>
+        {/* <Route path={appRoutes.organizations_list} element={<OrganizationsList />} /> */}
         <Route path={appRoutes.login} element={<LoginPage />} />
         <Route path={appRoutes.signup} element={<SignUp />} />
         {/* <Route path={appRoutes.services} element={<ServicesPage />} /> */}
@@ -36,12 +38,14 @@ const AppRoutes: React.FC = () => {
           <Route path={appRoutes.team_members} element={<TeamMembers />} />
         </Route>
 
+      </Route>
+
         {/* Common routes */}
         <Route path={appRoutes.services} element={<ServicesPage />} />
         <Route path={appRoutes.service_details} element={<ServiceDetailsPage />} />
-      </Route>
-
+        <Route path={appRoutes.organizations_list} element={<OrganizationsList />} />
       {/* Catch all route */}
+  
       <Route path="*" element={<Navigate to="/" replace />} />
     </Routes>
   );

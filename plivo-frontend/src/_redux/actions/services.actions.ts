@@ -7,14 +7,14 @@ import type { ServiceInterface } from '@/_constants/Interfaces/ServicesInterface
 import type { IncidentInterface } from '@/_constants/Interfaces/ServicesInterface';
 
 // Service Actions
-export const getServicesAction = () => async (dispatch: Dispatch<ServiceActionTypes>) => {
+export const getServicesAction = (org_id: string) => async (dispatch: Dispatch<ServiceActionTypes>) => {
   dispatch({
     type: serviceConstants.GET_SERVICES.REQUEST,
     payload: null,
   });
   
   try {
-    const response = await axiosNodeInstance.get(apiUrls.services.getServicesList);
+    const response = await axiosNodeInstance.get(apiUrls.services.getServicesList(org_id));
     dispatch({
       type: serviceConstants.GET_SERVICES.SUCCESS,
       payload: response.data,

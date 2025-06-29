@@ -8,6 +8,8 @@ import {
 } from '@/_redux/actions/services.actions';
 import type { ServiceInterface, ServiceStatusType } from '@/_constants/Interfaces/ServicesInterface';
 import type { RootState, AppDispatch } from '@/_redux/store';
+import { useParams } from 'react-router-dom';
+import { useAuth } from '@/_contexts/AuthContext';
 
 interface ServiceFormData {
   name: string;
@@ -25,17 +27,24 @@ const initialFormData: ServiceFormData = {
 export const useServices = () => {
   const dispatch = useDispatch<AppDispatch>();
   const { services, loading, message, error, type } = useSelector((state: RootState) => state.getServicesListReducer);
-  
+  const { org_id } = useParams();
+  const { user } = useAuth();
   const [isCreateModalOpen, setIsCreateModalOpen] = useState(false);
   const [isEditModalOpen, setIsEditModalOpen] = useState(false);
   const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false);
   const [selectedService, setSelectedService] = useState<ServiceInterface | null>(null);
   const [formData, setFormData] = useState<ServiceFormData>(initialFormData);
+  const [orgId, setOrgId] = useState<string>("");
   useEffect(() => {
-    getServicesList();
-  }, [dispatch]);
-  const getServicesList = async () => {
-    const result = await dispatch(getServicesAction());
+
+    if(user?.organization?.id||org_id){
+      console.log("org_id",org_id);
+      setOrgId(org_id||user?.organization?.id||"");
+      getServicesList(`${org_id||user?.organization?.id||""}`);
+    }
+  }, [dispatch, org_id,user?.organization?.id,user]);
+  const getServicesList = async (org_id: string) => {
+    const result = await dispatch(getServicesAction(org_id));
     if (result.success) {
       return result.data;
     }
@@ -43,7 +52,7 @@ export const useServices = () => {
 
   const handleCreateService = async () => {
     const result = await createService(formData);
-    getServicesList()
+    getServicesList(orgId);
     if (result.success) {
       setIsCreateModalOpen(false);
       setFormData(initialFormData);
@@ -54,7 +63,7 @@ export const useServices = () => {
     if (!selectedService) return;
     
     const result = await updateService(selectedService.id, formData);
-    getServicesList()
+    getServicesList(orgId);
     if (result.success) {
       setIsEditModalOpen(false);
       setSelectedService(null);
@@ -66,7 +75,7 @@ export const useServices = () => {
     if (!selectedService) return;
     
     const result = await deleteService(selectedService.id);
-    getServicesList()
+    getServicesList(orgId);
     if (result.success) {
       setIsDeleteModalOpen(false);
       setSelectedService(null);
