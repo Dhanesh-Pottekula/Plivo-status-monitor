@@ -226,6 +226,7 @@ def user_profile_view(request):
 
 @api_view(['GET'])
 @permission_classes([AllowAny])
+@public_endpoint
 def get_organizations_view(request):
     """
     Get all organizations (for admin users) or user's organization
