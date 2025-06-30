@@ -14,6 +14,7 @@ import { getOrganizationDetailsAction } from '@/_redux/actions/organizations.act
 import { getTimeLineOfOrganizationAction } from '@/_redux/actions/timeline.actions';
 import { useRoomSocket } from './useRoomSocket';
 import { SOCKET_ROOM_ORG_UPDATE } from '@/_constants/socketConstants';
+import wsManager from '@/lib/ws_socket';
 
 interface ServiceFormData {
   name: string;
@@ -110,6 +111,10 @@ export const useServices = () => {
   const createService = async (serviceData: Partial<ServiceInterface>) => {
     try {
       await dispatch(createServiceAction(serviceData));
+      if(!wsManager.isSocketConnected() ){
+       await dispatch(getTimeLineOfOrganizationAction(org_id||""));
+       getServicesList(`${org_id||""}`);
+      }
       return { success: true };
     } catch (error) {
       console.error('Failed to create service:', error);
@@ -120,6 +125,11 @@ export const useServices = () => {
   const updateService = async (id: number, serviceData: Partial<ServiceInterface>) => {
     try {
       await dispatch(updateServiceAction(id, serviceData));
+      if(!wsManager.isSocketConnected() ){
+        await dispatch(getTimeLineOfOrganizationAction(org_id||""));
+        await dispatch(getTimeLineOfOrganizationAction(org_id||""));
+        getServicesList(`${org_id||""}`);
+       }
       return { success: true };
     } catch (error) {
       console.error('Failed to update service:', error);
@@ -130,6 +140,10 @@ export const useServices = () => {
   const deleteService = async (id: number) => {
     try {
       await dispatch(deleteServiceAction(id));
+      if(!wsManager.isSocketConnected() ){
+        await dispatch(getTimeLineOfOrganizationAction(org_id||""));
+        getServicesList(`${org_id||""}`);
+       }
       return { success: true };
     } catch (error) {
       console.error('Failed to delete service:', error);

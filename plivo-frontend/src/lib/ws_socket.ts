@@ -78,6 +78,9 @@ class WebSocketManager {
       this.socket.send(JSON.stringify(data));
     }
   }
+  isSocketConnected() {
+    return this.isConnected;
+  }
 }
 
 const wsManager = new WebSocketManager();

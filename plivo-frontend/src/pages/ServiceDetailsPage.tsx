@@ -34,6 +34,8 @@ import TimelineComponent from "@/components/TimelineComponent";
 import { useAuth } from "@/_contexts/AuthContext";
 import { useRoomSocket } from "@/hooks/useRoomSocket";
 import { SOCKET_ROOM_INCIDENT_UPDATE } from "@/_constants/socketConstants";
+import wsManager from "@/lib/ws_socket";
+import { getTimeLineOfOrganizationAction } from "@/_redux/actions/timeline.actions";
 
 function ServiceDetailsPage() {
   const { service_id } = useParams<{ service_id: string }>();
@@ -95,6 +97,10 @@ function ServiceDetailsPage() {
       await dispatch(updateServiceAction(service.id, formData));
       setIsEditModalOpen(false);
       // WebSocket will handle refreshing the service details and timeline
+      if(!wsManager.isSocketConnected() ){
+        await dispatch(getTimeLineOfOrganizationAction(service?.organization?.id||""));
+        dispatch(getServiceDetialAction(parseInt(service_id||"")));
+       }
     } catch (error) {
       console.error("Failed to update service:", error);
     }
@@ -107,6 +113,10 @@ function ServiceDetailsPage() {
       await dispatch(deleteServiceAction(service.id));
       setIsDeleteModalOpen(false);
       // Navigate back to services page after deletion
+      if(!wsManager.isSocketConnected() ){
+        await dispatch(getTimeLineOfOrganizationAction(service?.organization?.id||""));
+        dispatch(getServiceDetialAction(parseInt(service_id||"")));
+       }
       navigate("/services");
     } catch (error) {
       console.error("Failed to delete service:", error);

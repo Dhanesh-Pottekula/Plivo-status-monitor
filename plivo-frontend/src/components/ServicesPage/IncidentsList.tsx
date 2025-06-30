@@ -24,6 +24,8 @@ import { type IncidentFormData } from "./types";
 import { type AppDispatch, type RootState } from "@/_redux/store";
 import { formatDate, getStatusBadgeVariant } from "@/_helpers/commonFunctions";
 import { useAuth } from "@/_contexts/AuthContext";
+import wsManager from "@/lib/ws_socket";
+import { getTimeLineOfServiceAction } from "@/_redux/actions/timeline.actions";
 
 interface IncidentsListProps {
   serviceId: number;
@@ -91,6 +93,10 @@ function IncidentsList({ serviceId }: IncidentsListProps) {
         status: "investigating",
         severity: "medium",
       });
+      if(!wsManager.isSocketConnected() ){
+        dispatch(getIncidentsAction(serviceId));
+        await dispatch(getTimeLineOfServiceAction(serviceId));
+       }
      
     } catch (error) {
       console.error('Failed to create incident:', error);
@@ -110,7 +116,10 @@ function IncidentsList({ serviceId }: IncidentsListProps) {
         status: "investigating",
         severity: "medium",
       });
-     
+      if(!wsManager.isSocketConnected() ){
+        dispatch(getIncidentsAction(serviceId));
+        await dispatch(getTimeLineOfServiceAction(serviceId));
+       }
     } catch (error) {
       console.error('Failed to update incident:', error);
     }
@@ -123,7 +132,10 @@ function IncidentsList({ serviceId }: IncidentsListProps) {
       await dispatch(deleteIncidentAction(serviceId, selectedIncident.id));
       setIsDeleteModalOpen(false);
       setSelectedIncident(null);
-     
+      if(!wsManager.isSocketConnected() ){
+        dispatch(getIncidentsAction(serviceId));
+        await dispatch(getTimeLineOfServiceAction(serviceId));
+       }
     } catch (error) {
       console.error('Failed to delete incident:', error);
     }
