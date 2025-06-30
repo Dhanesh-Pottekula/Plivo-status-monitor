@@ -134,6 +134,11 @@ CORS_ALLOWED_ORIGINS = [
     "http://127.0.0.1:5173",
     "https://plivo-status-monitor-frontend.onrender.com"
 ]
+CSRF_TRUSTED_ORIGINS = [
+    "https://plivo-status-monitor-frontend.onrender.com",
+    "http://localhost:5173",
+    "http://127.0.0.1:5173",
+]
 ALLOWED_HOSTS = [
     'plivo-status-monitor.onrender.com',
     'localhost',         # for local dev
@@ -199,7 +204,6 @@ SIMPLE_JWT = {
 
 # Custom user model
 AUTH_USER_MODEL = 'users.User'
-
 # Authentication backends
 AUTHENTICATION_BACKENDS = [
     'django.contrib.auth.backends.ModelBackend',
