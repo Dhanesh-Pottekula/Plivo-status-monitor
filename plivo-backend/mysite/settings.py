@@ -146,7 +146,7 @@ CSRF_EXEMPT_URLS = [
 CORS_ALLOW_CREDENTIALS = True
 
 # Frontend URL for invite links
-FRONTEND_URL = 'http://localhost:5173'  # Vite dev server URL
+FRONTEND_URL =  "https://plivo-status-monitor-frontend.onrender.com" # Vite dev server URL
 
 # REST Framework settings
 REST_FRAMEWORK = {
@@ -194,7 +194,7 @@ SIMPLE_JWT = {
     'AUTH_COOKIE_SECURE': True,  # Set to True in production with HTTPS
     'AUTH_COOKIE_HTTP_ONLY': True,
     'AUTH_COOKIE_PATH': '/',
-    'AUTH_COOKIE_SAMESITE': 'Lax',
+    'AUTH_COOKIE_SAMESITE': 'None',
 }
 
 # Custom user model
