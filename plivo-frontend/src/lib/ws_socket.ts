@@ -1,4 +1,4 @@
-import { envDefaults } from "envDefaults";
+import { envDefaults } from "../../envDefaults";
 
 // wsManager.ts
 type Listener = (data: any) => void;
