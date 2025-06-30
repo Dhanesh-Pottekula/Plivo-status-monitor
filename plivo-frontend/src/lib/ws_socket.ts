@@ -1,3 +1,5 @@
+import { envDefaults } from "../../envDefaults";
+
 // wsManager.ts
 type Listener = (data: any) => void;
 
@@ -13,7 +15,8 @@ class WebSocketManager {
 
     if (!this.connectionPromise) {
       this.connectionPromise = new Promise((resolve, reject) => {
-        this.socket = new WebSocket("ws://localhost:8765/");
+        this.socket = new WebSocket(envDefaults.wsUrl);
+
 
         this.socket.onopen = () => {
           console.log("✅ WebSocket connected");
@@ -74,6 +77,9 @@ class WebSocketManager {
     if (this.socket && this.socket.readyState === WebSocket.OPEN) {
       this.socket.send(JSON.stringify(data));
     }
+  }
+  isSocketConnected() {
+    return this.isConnected;
   }
 }
 

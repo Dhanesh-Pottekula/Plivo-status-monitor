@@ -82,6 +82,9 @@ assessments/
    ```bash
    pip install django djangorestframework djangorestframework-simplejwt django-cors-headers websockets
    ```
+   or 
+   
+   ```pip install -r requirements.txt```
 
 4. **Run database migrations**
    ```bash

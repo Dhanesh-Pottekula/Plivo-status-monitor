@@ -11,7 +11,7 @@ https://docs.djangoproject.com/en/5.2/ref/settings/
 """
 
 from pathlib import Path
-
+import os
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
 
@@ -23,10 +23,7 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 SECRET_KEY = 'django-insecure-#4xs++t2sgafw640x@bwr=td_aj5_wg1a+579h7b-l5!t*4tkc'
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = True
-
-ALLOWED_HOSTS = []
-
+DEBUG = os.environ.get('DEBUG', 'False') == 'True'
 
 # Application definition
 
@@ -122,6 +119,8 @@ USE_TZ = True
 # https://docs.djangoproject.com/en/5.2/howto/static-files/
 
 STATIC_URL = 'static/'
+STATIC_ROOT = os.path.join(BASE_DIR, 'staticfiles')
+
 
 # Default primary key field type
 # https://docs.djangoproject.com/en/5.2/ref/settings/#default-auto-field
@@ -133,14 +132,26 @@ DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 CORS_ALLOWED_ORIGINS = [
     "http://localhost:5173",  # Vite dev server
     "http://127.0.0.1:5173",
+    "https://plivo-status-monitor-frontend.onrender.com"
 ]
+CSRF_TRUSTED_ORIGINS = [
+    "https://plivo-status-monitor-frontend.onrender.com",
+    "http://localhost:5173",
+    "http://127.0.0.1:5173",
+]
+ALLOWED_HOSTS = [
+    'plivo-status-monitor.onrender.com',
+    'localhost',         # for local dev
+    '127.0.0.1'
+]
+
 CSRF_EXEMPT_URLS = [
     r'^/api/',  # all URLs under /api/ will be exempt
 ]
 CORS_ALLOW_CREDENTIALS = True
 
 # Frontend URL for invite links
-FRONTEND_URL = 'http://localhost:5173'  # Vite dev server URL
+FRONTEND_URL =  "https://plivo-status-monitor-frontend.onrender.com" # Vite dev server URL
 
 # REST Framework settings
 REST_FRAMEWORK = {
@@ -185,15 +196,14 @@ SIMPLE_JWT = {
     # Cookie settings
     'AUTH_COOKIE': 'access_token',
     'AUTH_COOKIE_DOMAIN': None,
-    'AUTH_COOKIE_SECURE': False,  # Set to True in production with HTTPS
-    'AUTH_COOKIE_HTTP_ONLY': False,
+    'AUTH_COOKIE_SECURE': True,  # Set to True in production with HTTPS
+    'AUTH_COOKIE_HTTP_ONLY': True,
     'AUTH_COOKIE_PATH': '/',
-    'AUTH_COOKIE_SAMESITE': 'Lax',
+    'AUTH_COOKIE_SAMESITE': 'None',
 }
 
 # Custom user model
 AUTH_USER_MODEL = 'users.User'
-
 # Authentication backends
 AUTHENTICATION_BACKENDS = [
     'django.contrib.auth.backends.ModelBackend',
