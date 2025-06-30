@@ -120,10 +120,11 @@ const TeamMemberItem: React.FC<TeamMemberItemProps> = ({
 
   return (
     <div
-      className={`flex items-center justify-between p-3 rounded-lg border ${getBackgroundColor()} relative`}
+      className={`flex flex-col sm:flex-row sm:items-center sm:justify-between p-3 rounded-lg border ${getBackgroundColor()} relative gap-3`}
     >
-      <div className="flex items-center gap-3">
-        <Avatar className="h-8 w-8">
+      {/* User Info Section */}
+      <div className="flex items-center gap-3 flex-1 min-w-0">
+        <Avatar className="h-8 w-8 flex-shrink-0">
           <AvatarImage src="" />
           <AvatarFallback
             className={`${getAvatarColor()} font-semibold text-sm`}
@@ -131,61 +132,70 @@ const TeamMemberItem: React.FC<TeamMemberItemProps> = ({
             {getAvatarFallback()}
           </AvatarFallback>
         </Avatar>
-        <div>
+        <div className="flex-1 min-w-0">
           <div className="flex items-center gap-2">
-            <h3 className="font-medium text-gray-900 text-sm">
+            <h3 className="font-medium text-gray-900 text-sm truncate">
               {isActive ? getDisplayName() : `@${member.username}`}
             </h3>
             {getStatusIcon()}
           </div>
-          <p className="text-xs text-gray-600">
+          <p className="text-xs text-gray-600 truncate">
             {isActive ? `@${member.username}` : "Invitation sent"}
           </p>
         </div>
       </div>
-      <div className="flex items-center gap-2 justify-end" >
 
-      <div className="flex items-center gap-2">
-        <Badge
-          variant={getRoleBadgeVariant(member.role)}
-          className="flex items-center gap-1 text-xs"
-        >
-          {getRoleIcon(member.role)}
-          {member.role.charAt(0).toUpperCase() + member.role.slice(1)}
-        </Badge>
-        {getStatusBadge()}
-      </div>
-
-      {/* Access Management Button */}
-      <div className=" top-2 right-2">
-        {!isActive && grantAndRevokeAccess && (
-          <Button
-            size="sm"
-            variant="outline"
-            onClick={handleGrantAccess}
-            disabled={isAccessLoading}
-            className="h-7 px-2 text-xs bg-green-50 border-green-200 text-green-700 hover:bg-green-100"
+      {/* Badges and Actions Section */}
+      <div className="flex flex-col sm:flex-row items-start sm:items-center gap-2 sm:gap-3 flex-shrink-0">
+        {/* Badges */}
+        <div className="flex flex-wrap items-center gap-2">
+          <Badge
+            variant={getRoleBadgeVariant(member.role)}
+            className="flex items-center gap-1 text-xs"
           >
-            <UserCheck className="h-3 w-3 mr-1" />
-            Grant Access
-          </Button>
-        )}
-        {isActive && grantAndRevokeAccess && (
-          <Button
-            size="sm"
-            variant="outline"
-            onClick={handleRevokeAccess}
-            disabled={isAccessLoading}
-            className="h-7 px-2 text-xs bg-red-50 border-red-200 text-red-700 hover:bg-red-100"
-          >
-            <UserX className="h-3 w-3 mr-1" />
-            Revoke Access
-          </Button>
+            {getRoleIcon(member.role)}
+            <span className="hidden sm:inline">
+              {member.role.charAt(0).toUpperCase() + member.role.slice(1)}
+            </span>
+            <span className="sm:hidden">
+              {member.role.charAt(0).toUpperCase()}
+            </span>
+          </Badge>
+          {getStatusBadge()}
+        </div>
+
+        {/* Access Management Button */}
+        {grantAndRevokeAccess && (
+          <div className="w-full sm:w-auto">
+            {!isActive && (
+              <Button
+                size="sm"
+                variant="outline"
+                onClick={handleGrantAccess}
+                disabled={isAccessLoading}
+                className="w-full sm:w-auto h-7 px-2 text-xs bg-green-50 border-green-200 text-green-700 hover:bg-green-100"
+              >
+                <UserCheck className="h-3 w-3 mr-1" />
+                <span className="hidden sm:inline">Grant Access</span>
+                <span className="sm:hidden">Grant</span>
+              </Button>
+            )}
+            {isActive && (
+              <Button
+                size="sm"
+                variant="outline"
+                onClick={handleRevokeAccess}
+                disabled={isAccessLoading}
+                className="w-full sm:w-auto h-7 px-2 text-xs bg-red-50 border-red-200 text-red-700 hover:bg-red-100"
+              >
+                <UserX className="h-3 w-3 mr-1" />
+                <span className="hidden sm:inline">Revoke Access</span>
+                <span className="sm:hidden">Revoke</span>
+              </Button>
+            )}
+          </div>
         )}
       </div>
-      </div>
-
-
     </div>
   );
 };
