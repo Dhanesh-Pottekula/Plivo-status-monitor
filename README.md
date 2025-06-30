@@ -135,59 +135,6 @@ assessments/
 - Invite links contain encrypted tokens with user information
 - Team members sign up using the invite link URL
 
-## 📊 Application Flows
-
-### 1. Organization Setup Flow
-```
-Admin Sign Up → Create Organization → Invite Team Members → Team Members Join
-```
-
-### 2. Service Management Flow
-```
-Create Service → Set Status → Monitor → Update Status → Track Timeline
-```
-
-### 3. Incident Management Flow
-```
-Service Issue → Create Incident → Update Status → Resolve → Timeline Log
-```
-
-### 4. Real-time Updates Flow
-```
-User Action → Backend Signal → WebSocket Broadcast → Frontend Update → UI Refresh
-```
-
-## 🔌 API Endpoints
-
-### Authentication
-- `POST /api/users/auth/signup/` - User registration
-- `POST /api/users/auth/login/` - User login
-- `POST /api/users/auth/logout/` - User logout
-- `GET /api/users/auth/profile/` - Get user profile
-
-### Organizations
-- `GET /api/users/organizations/` - List user organizations
-- `GET /api/users/organizations/{id}/` - Get organization details
-
-### Services
-- `GET /api/services/` - List services
-- `POST /api/services/` - Create service
-- `GET /api/services/{id}/` - Get service details
-- `PUT /api/services/{id}/` - Update service
-- `DELETE /api/services/{id}/` - Delete service
-
-### Incidents
-- `GET /api/services/{service_id}/incidents/` - List incidents
-- `POST /api/services/{service_id}/incidents/` - Create incident
-- `PUT /api/services/{service_id}/incidents/{id}/` - Update incident
-- `DELETE /api/services/{service_id}/incidents/{id}/` - Delete incident
-
-### Timeline
-- `GET /api/timeline/service/{service_id}/` - Get service timeline
-- `GET /api/timeline/organization/{org_id}/` - Get organization timeline
-
-## 🔄 Real-time Features
-
 ### WebSocket Integration
 - **Room-based messaging**: Each service has its own WebSocket room
 - **Automatic updates**: UI updates instantly when data changes
@@ -219,6 +166,40 @@ User Action → Backend Signal → WebSocket Broadcast → Frontend Update → U
 - Optimistic updates
 - Error handling and loading states
 
+## 🔌 API Endpoints
+
+### Authentication
+- `POST /api/users/auth/signup/` - User registration
+- `POST /api/users/auth/login/` - User login
+- `POST /api/users/auth/logout/` - User logout
+- `GET /api/users/auth/profile/` - Get user profile
+
+### Organizations
+- `GET /api/users/organizations/` - List user organizations
+- `GET /api/users/organizations/{id}/` - Get organization details
+
+### Services
+- `GET /api/services/` - List services
+- `POST /api/services/` - Create service
+- `GET /api/services/{id}/` - Get service details
+- `PUT /api/services/{id}/` - Update service
+- `DELETE /api/services/{id}/` - Delete service
+
+### Incidents
+- `GET /api/services/{service_id}/incidents/` - List incidents
+- `POST /api/services/{service_id}/incidents/` - Create incident
+- `PUT /api/services/{service_id}/incidents/{id}/` - Update incident
+- `DELETE /api/services/{service_id}/incidents/{id}/` - Delete incident
+
+### Timeline
+- `GET /api/timeline/service/{service_id}/` - Get service timeline
+- `GET /api/timeline/organization/{org_id}/` - Get organization timeline
+
+
+
+
+
+
 ## 🔧 Development
 
 ### Code Structure
@@ -227,10 +208,6 @@ User Action → Backend Signal → WebSocket Broadcast → Frontend Update → U
 - **Prettier**: Code formatting
 - **Modular architecture**: Separated concerns
 
-### Testing
-- Backend: Django test framework
-- Frontend: React Testing Library (can be added)
-- API testing: Django REST framework test utilities
 
 ### Environment Configuration
 - Development settings in Django
@@ -252,35 +229,3 @@ User Action → Backend Signal → WebSocket Broadcast → Frontend Update → U
 3. Configure API base URL for production
 4. Set up HTTPS for secure cookie transmission
 
-## 🔒 Security Features
-
-- JWT tokens in HTTP-only cookies
-- CORS protection
-- Input validation and sanitization
-- Role-based access control
-- Secure invite token system
-- SQL injection protection (Django ORM)
-
-## 📈 Scalability Considerations
-
-- **Database**: Can easily switch to PostgreSQL/MySQL
-- **Caching**: Redis can be added for session/timeline caching
-- **Load Balancing**: Multiple Django instances behind load balancer
-- **WebSocket Scaling**: Redis pub/sub for WebSocket scaling
-- **CDN**: Static assets can be served via CDN
-
-## 🤝 Contributing
-
-1. Fork the repository
-2. Create a feature branch
-3. Make your changes
-4. Add tests if applicable
-5. Submit a pull request
-
-## 📝 License
-
-This project is for assessment purposes. Please refer to the original requirements for usage terms.
-
----
-
-**Note**: This is a full-stack application demonstrating modern web development practices with real-time features, proper authentication, and scalable architecture. 
