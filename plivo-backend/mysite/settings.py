@@ -25,13 +25,6 @@ SECRET_KEY = 'django-insecure-#4xs++t2sgafw640x@bwr=td_aj5_wg1a+579h7b-l5!t*4tkc
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = os.environ.get('DEBUG', 'False') == 'True'
 
-ALLOWED_HOSTS = [
-    'plivo-backend.onrender.com',
-    'localhost',
-    '127.0.0.1'
-]
-
-
 # Application definition
 
 INSTALLED_APPS = [
@@ -141,6 +134,12 @@ CORS_ALLOWED_ORIGINS = [
     "http://127.0.0.1:5173",
     "https://plivo-frontend.onrender.com"
 ]
+ALLOWED_HOSTS = [
+    'plivo-status-monitor.onrender.com',
+    'localhost',         # for local dev
+    '127.0.0.1'
+]
+
 CSRF_EXEMPT_URLS = [
     r'^/api/',  # all URLs under /api/ will be exempt
 ]
