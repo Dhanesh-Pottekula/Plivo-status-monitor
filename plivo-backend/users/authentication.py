@@ -38,13 +38,17 @@ class CookieJWTAuthentication(BaseAuthentication):
             
         except (InvalidToken, TokenError) as e:
             logger.warning(f"Invalid JWT token: {e}")
-            raise AuthenticationFailed('Invalid or expired token.')
+            # Don't raise AuthenticationFailed for invalid tokens, just return None
+            # This allows the request to proceed without authentication
+            return None
         except User.DoesNotExist:
             logger.warning(f"User not found for token")
-            raise AuthenticationFailed('User not found.')
+            # Don't raise AuthenticationFailed for missing users, just return None
+            return None
         except Exception as e:
             logger.error(f"JWT authentication error: {e}")
-            raise AuthenticationFailed('Authentication error.')
+            # Don't raise AuthenticationFailed for other errors, just return None
+            return None
     
     def authenticate_header(self, request):
         return 'Cookie' 

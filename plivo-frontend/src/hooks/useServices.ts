@@ -11,7 +11,9 @@ import type { RootState, AppDispatch } from '@/_redux/store';
 import { useParams } from 'react-router-dom';
 import { useAuth } from '@/_contexts/AuthContext';
 import { getOrganizationDetailsAction } from '@/_redux/actions/organizations.actions';
-import { getTimeLineOfOrganizationAction, getTimeLineOfServiceAction } from '@/_redux/actions/timeline.actions';
+import { getTimeLineOfOrganizationAction } from '@/_redux/actions/timeline.actions';
+import { useRoomSocket } from './useRoomSocket';
+import { SOCKET_ROOM_ORG_UPDATE } from '@/_constants/socketConstants';
 
 interface ServiceFormData {
   name: string;
@@ -48,6 +50,10 @@ export const useServices = () => {
       getOrganizationDetails(org_id||"");
     }
   }, [ org_id]);
+
+  useRoomSocket(SOCKET_ROOM_ORG_UPDATE(org_id||""));
+
+
   const getServicesList = async (org_id: string) => {
     const result = await dispatch(getServicesAction(org_id));
     if (result.success) {
@@ -57,7 +63,6 @@ export const useServices = () => {
 
   const handleCreateService = async () => {
     const result = await createService(formData);
-    getServicesList(org_id||"");
     if (result.success) {
       setIsCreateModalOpen(false);
       setFormData(initialFormData);
@@ -68,8 +73,6 @@ export const useServices = () => {
     if (!selectedService) return;
     
     const result = await updateService(selectedService.id, formData);
-    getServicesList(org_id||"");
-    await dispatch(getTimeLineOfOrganizationAction(org_id||""));
     if (result.success) {
       setIsEditModalOpen(false);
       setSelectedService(null);
@@ -81,7 +84,6 @@ export const useServices = () => {
     if (!selectedService) return;
     
     const result = await deleteService(selectedService.id);
-    getServicesList(org_id||"");
     if (result.success) {
       setIsDeleteModalOpen(false);
       setSelectedService(null);

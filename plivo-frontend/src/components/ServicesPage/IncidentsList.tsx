@@ -24,7 +24,6 @@ import { type IncidentFormData } from "./types";
 import { type AppDispatch, type RootState } from "@/_redux/store";
 import { formatDate, getStatusBadgeVariant } from "@/_helpers/commonFunctions";
 import { useAuth } from "@/_contexts/AuthContext";
-import { getTimeLineOfServiceAction } from "@/_redux/actions/timeline.actions";
 
 interface IncidentsListProps {
   serviceId: number;
@@ -92,9 +91,7 @@ function IncidentsList({ serviceId }: IncidentsListProps) {
         status: "investigating",
         severity: "medium",
       });
-      // Refresh incidents list
-      await dispatch(getIncidentsAction(serviceId));
-      await dispatch(getTimeLineOfServiceAction(serviceId));
+     
     } catch (error) {
       console.error('Failed to create incident:', error);
     }
@@ -113,9 +110,7 @@ function IncidentsList({ serviceId }: IncidentsListProps) {
         status: "investigating",
         severity: "medium",
       });
-      // Refresh incidents list
-      await dispatch(getIncidentsAction(serviceId));
-      await dispatch(getTimeLineOfServiceAction(serviceId));
+     
     } catch (error) {
       console.error('Failed to update incident:', error);
     }
@@ -128,9 +123,7 @@ function IncidentsList({ serviceId }: IncidentsListProps) {
       await dispatch(deleteIncidentAction(serviceId, selectedIncident.id));
       setIsDeleteModalOpen(false);
       setSelectedIncident(null);
-      // Refresh incidents list
-      await dispatch(getIncidentsAction(serviceId));
-      await dispatch(getTimeLineOfServiceAction(serviceId));
+     
     } catch (error) {
       console.error('Failed to delete incident:', error);
     }
@@ -166,9 +159,9 @@ function IncidentsList({ serviceId }: IncidentsListProps) {
   return (
     <div className="space-y-3">
       {/* Header */}
-      <div className="flex justify-between items-center">
-        <h2 className="text-xl font-semibold text-gray-900">Incidents</h2>
-        {is_have_edit_access && <Button onClick={() => setIsCreateModalOpen(true)} size="sm">
+      <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-3">
+        <h2 className="text-lg sm:text-xl font-semibold text-gray-900">Incidents</h2>
+        {is_have_edit_access && <Button onClick={() => setIsCreateModalOpen(true)} size="sm" className="w-full sm:w-auto">
           <Plus className="h-3 w-3 mr-1" />
           Create Incident
         </Button>}
@@ -176,16 +169,16 @@ function IncidentsList({ serviceId }: IncidentsListProps) {
 
       {/* Incidents List */}
       {incidents && incidents.length > 0 ? (
-        <div className="space-y-2">
+        <div className="space-y-2  max-h-[40vh] overflow-y-auto">
           {incidents.map((incident) => (
             <Card key={incident.id} className="border border-gray-200 shadow-sm">
               <CardHeader className="pb-3">
-                <CardTitle className="flex items-center justify-between text-base">
-                  <div className="flex items-center space-x-2">
+                <CardTitle className="flex flex-col sm:flex-row sm:items-center sm:justify-between text-base gap-2">
+                  <div className="flex items-center space-x-2 min-w-0 flex-1">
                     {getStatusIcon(incident.status)}
-                    <span className="font-medium">{incident.title}</span>
+                    <span className="font-medium truncate">{incident.title}</span>
                   </div>
-                  <div className="flex items-center space-x-1">
+                  <div className="flex items-center space-x-1 flex-wrap gap-1">
                     <Badge variant={getStatusBadgeVariant(incident.status)} className="text-xs">
                       {
                         INCIDENT_STATUS_OPTIONS.find(
@@ -221,8 +214,8 @@ function IncidentsList({ serviceId }: IncidentsListProps) {
               </CardHeader>
               <CardContent className="pt-0">
                 <p className="text-sm text-gray-600 mb-2 line-clamp-2">{incident.description}</p>
-                <div className="flex items-center justify-between text-xs text-gray-500">
-                  <div className="flex items-center space-x-4">
+                <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between text-xs text-gray-500 gap-1">
+                  <div className="flex flex-col sm:flex-row sm:items-center sm:space-x-4 space-y-1 sm:space-y-0">
                     <span>By {incident.createdBy}</span>
                     <span>Created {formatDate(incident.createdAt)}</span>
                     {incident.resolvedAt && (
@@ -236,13 +229,13 @@ function IncidentsList({ serviceId }: IncidentsListProps) {
         </div>
       ) : (
         <Card className="border border-gray-200 shadow-sm">
-          <CardContent className="flex flex-col items-center justify-center py-6">
+          <CardContent className="flex flex-col items-center justify-center py-6 px-4">
             <AlertTriangle className="h-8 w-8 text-gray-400 mb-2" />
-            <h3 className="text-sm font-medium text-gray-600 mb-1">No incidents yet</h3>
+            <h3 className="text-sm font-medium text-gray-600 mb-1 text-center">No incidents yet</h3>
             <p className="text-xs text-gray-500 text-center mb-3">
               There are no incidents reported for this service.
             </p>
-            <Button onClick={() => setIsCreateModalOpen(true)} size="sm">
+            <Button onClick={() => setIsCreateModalOpen(true)} size="sm" className="w-full sm:w-auto">
               <Plus className="h-3 w-3 mr-1" />
               Create First Incident
             </Button>

@@ -1,0 +1,2 @@
+export const SOCKET_ROOM_ORG_UPDATE = (org_id: string) => `org_${org_id}_update`; // only for service updates 
+export const SOCKET_ROOM_INCIDENT_UPDATE = (org_id: string, incident_id: string) => `org_${org_id}_incident_${incident_id}_update`;// for incident updates
